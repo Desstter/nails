@@ -153,7 +153,7 @@ export default function Services() {
                     : "bg-gray-50 hover:bg-yellow-50 text-gray-700 hover:text-yellow-700 border border-gray-200 hover:border-yellow-300"
                 }`}
               >
-                {service.specialty ? "Reservar Mi Especialidad" : `Agendar ${service.name}`}
+                Reservar Ahora
               </button>
 
               {/* Payment Methods */}
@@ -195,7 +195,7 @@ export default function Services() {
             onClick={() => handleBookService("Promoción 2x1 Gel Premium - Primera Cita")}
             className="btn-primary text-lg px-8 py-4"
           >
-            Aprovechar Promoción 2x1
+            Reservar Promoción
           </button>
         </div>
 
@@ -210,7 +210,7 @@ export default function Services() {
             onClick={() => handleBookService("Servicio Personalizado")}
             className="btn-secondary"
           >
-            Consultar Servicio Personalizado
+            Consultar Personalizado
           </button>
         </div>
       </div>
