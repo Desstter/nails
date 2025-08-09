@@ -70,22 +70,84 @@ export default function Testimonials() {
       <div className="container-luxury">
         <div className="text-center mb-16">
           <h2 className="text-luxury-lg mb-6">
-            Lo que dicen nuestras <span className="gradient-gold">Clientas</span>
+            Confianza y <span className="gradient-gold">Profesionalismo</span>
           </h2>
           <p className="text-premium max-w-2xl mx-auto">
-            La satisfacción de nuestras clientas es nuestra mayor recompensa. 
-            Lee lo que opinan sobre la experiencia Bella Nails Studio.
+            Resultados comprobados que respaldan nuestra calidad y experiencia. 
+            Lee lo que opinan nuestras clientas satisfechas.
           </p>
         </div>
 
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {stats.map((stat, index) => (
-            <div key={index} className="text-center bg-gradient-to-br from-yellow-50 to-pink-50 rounded-xl p-6">
-              <div className="text-3xl font-bold gradient-gold mb-2">{stat.number}</div>
-              <div className="text-sm text-gray-600">{stat.label}</div>
+        {/* Stats Section Consolidada */}
+        <div className="bg-white rounded-3xl p-8 shadow-luxury mb-16">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            {/* Perfil profesional */}
+            <div className="text-center md:text-left">
+              <div className="inline-flex items-center gap-4 mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center shadow-elegant">
+                  <span className="text-white text-2xl font-bold">CS</span>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-semibold text-gray-800">Claudia Shirley Lopez</h3>
+                  <p className="text-yellow-600 font-medium">Nail Artist Profesional</p>
+                  <div className="flex items-center gap-1 mt-1">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-yellow-400 text-sm">★</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
+                  <span className="text-blue-600 text-xl">🎓</span>
+                  <div>
+                    <p className="font-medium text-gray-800">Certificación Profesional</p>
+                    <p className="text-gray-600 text-sm">Instituto de Belleza Integral - Cali</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
+                  <span className="text-purple-600 text-xl">🛡️</span>
+                  <div>
+                    <p className="font-medium text-gray-800">Protocolo de Higiene</p>
+                    <p className="text-gray-600 text-sm">Certificada en bioseguridad</p>
+                  </div>
+                </div>
+              </div>
             </div>
-          ))}
+
+            {/* Estadísticas */}
+            <div className="grid grid-cols-2 gap-4">
+              {stats.map((stat, index) => (
+                <div key={index} className="text-center bg-gradient-to-br from-yellow-50 to-pink-50 rounded-xl p-6 border border-yellow-200">
+                  <div className="text-3xl font-bold gradient-gold mb-2">{stat.number}</div>
+                  <div className="text-sm text-gray-600">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Métodos de pago consolidados */}
+          <div className="mt-8 pt-6 border-t border-gray-100 text-center">
+            <h4 className="text-lg font-semibold text-gray-800 mb-4">Métodos de Pago</h4>
+            <div className="flex justify-center gap-4">
+              <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-full">
+                <span className="text-lg">💵</span>
+                <span className="text-gray-700 font-medium">Efectivo</span>
+              </div>
+              <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-full">
+                <span className="text-lg">📱</span>
+                <span className="text-gray-700 font-medium">Nequi</span>
+              </div>
+              <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-full">
+                <span className="text-lg">🏦</span>
+                <span className="text-gray-700 font-medium">Transferencia</span>
+              </div>
+            </div>
+            <p className="text-sm text-gray-500 mt-3">
+              *Pago al finalizar el servicio • Sin anticipos
+            </p>
+          </div>
         </div>
 
         {/* Testimonials Grid */}
@@ -148,26 +210,18 @@ export default function Testimonials() {
         <div className="text-center mt-12">
           <h3 className="text-elegant mb-4">¿Lista para vivir la experiencia?</h3>
           <p className="text-premium mb-6">
-            Únete a más de 500 mujeres que ya confían en Bella Nails Studio para el cuidado de sus uñas
+            Únete a más de 500 mujeres que ya confían en Bella Nails Studio
           </p>
           <button 
             onClick={() => {
               const message = encodeURIComponent(
-                "Hola! Leí los testimonios y me convencieron. Me gustaría agendar una cita para experimentar el servicio premium."
+                "Hola! Leí los testimonios y me convencieron. Me gustaría agendar una cita."
               );
               window.open(`https://wa.me/573187229548?text=${message}`, "_blank");
             }}
-            className="btn-primary mr-4"
+            className="btn-primary"
           >
-            Agendar Mi Primera Cita
-          </button>
-          <button 
-            onClick={() => {
-              window.open("https://instagram.com/bellanailsstudio", "_blank");
-            }}
-            className="btn-secondary"
-          >
-            Ver Más en Instagram
+            Reservar Ahora
           </button>
         </div>
       </div>
