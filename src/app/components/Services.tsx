@@ -3,71 +3,73 @@
 export default function Services() {
   const services = [
     {
-      id: "classic",
-      name: "Manicure Clásico",
-      price: "COP $45.000",
-      duration: "45 min",
-      description: "Manicure completo con limado, cutícula, hidratación y esmaltado clásico",
-      features: [
-        "Limado y forma perfecta",
-        "Cuidado de cutículas",
-        "Exfoliación suave",
-        "Hidratación profunda",
-        "Esmaltado clásico",
-        "Secado profesional"
-      ],
-      popular: false
-    },
-    {
-      id: "gel-premium",
-      name: "Gel Premium",
-      price: "COP $70.000",
-      duration: "60 min",
-      description: "Manicure gel con duración de hasta 3 semanas, perfecto para manos impecables. ¡2x1 en tu primera cita!",
-      features: [
-        "Todo lo del servicio clásico",
-        "Esmaltado gel premium",
-        "Duración 2-3 semanas",
-        "Brillo perfecto",
-        "Resistente al agua",
-        "Secado UV/LED"
-      ],
-      popular: false
-    },
-    {
       id: "semi-permanent",
-      name: "Semi Permanente",
-      price: "COP $80.000",
+      name: "✨ Semi Permanente Premium",
+      price: "COP $50.000",
       duration: "75 min",
-      description: "Mi especialidad. Técnica avanzada semi permanente con acabado profesional de hasta 4 semanas",
+      description: "Técnica avanzada con acabado profesional de hasta 4 semanas. Ideal para manos impecables y brillantes por más tiempo.",
       features: [
-        "Preparación especializada de uñas",
-        "Base adherente profesional",
-        "Esmaltado semi permanente premium",
-        "Técnica de aplicación exclusiva",
-        "Duración 3-4 semanas",
-        "Acabado ultra brillante",
-        "Curado LED de alta calidad",
-        "Resistente a golpes y agua"
+        "✅ Preparación especializada de uñas",
+        "✅ Base adherente profesional",
+        "✅ Esmaltado semi permanente premium",
+        "✅ Técnica de aplicación exclusiva",
+        "✅ Duración 3-4 semanas",
+        "✅ Acabado ultra brillante",
+        "✅ Curado LED de alta calidad",
+        "✅ Resistente a golpes y agua",
+        "✅ Incluye exfoliación y trato VIP"
+      ],
+      popular: false,
+      specialty: false
+    },
+    {
+      id: "acrylic-mold",
+      name: "💅 Uñas Acrílicas con Molde",
+      price: "COP $100.000",
+      duration: "120 min",
+      description: "Diseño estructural personalizado para mayor resistencia y elegancia.",
+      features: [
+        "✅ Extensión con molde profesional",
+        "✅ Acrílico de alta calidad",
+        "✅ Forma y largo a elección",
+        "✅ Acabado resistente y natural",
+        "✅ Curado y sellado perfecto",
+        "✅ Incluye exfoliación y trato VIP"
       ],
       popular: true,
       specialty: true
     },
     {
-      id: "vip-treatment",
-      name: "Tratamiento VIP",
-      price: "COP $95.000",
+      id: "acrylic-coating",
+      name: "💖 Forrado en Acrílico",
+      price: "COP $85.000",
       duration: "90 min",
-      description: "Experiencia completa de lujo con manicure, pedicure y tratamiento de manos",
+      description: "Refuerzo ideal para uñas naturales, más fuertes y duraderas sin perder la naturalidad.",
       features: [
-        "Manicure gel premium",
-        "Pedicure completo",
-        "Masaje relajante",
-        "Mascarilla nutritiva",
-        "Aceites esenciales",
-        "Experiencia spa completa"
+        "✅ Cobertura completa con acrílico",
+        "✅ Mayor dureza y resistencia",
+        "✅ Acabado liso y brillante",
+        "✅ Protección contra quiebres",
+        "✅ Incluye exfoliación y trato VIP"
       ],
-      popular: false
+      popular: false,
+      specialty: false
+    },
+    {
+      id: "acrylic-tips",
+      name: "🌟 Uñas Acrílicas con Tips",
+      price: "COP $80.000",
+      duration: "100 min",
+      description: "Extensiones rápidas y perfectas para lucir uñas largas y estilizadas.",
+      features: [
+        "✅ Aplicación con tips profesionales",
+        "✅ Acrílico duradero",
+        "✅ Forma y largo a elección",
+        "✅ Acabado brillante",
+        "✅ Incluye exfoliación y trato VIP"
+      ],
+      popular: false,
+      specialty: false
     }
   ];
 
@@ -116,7 +118,7 @@ export default function Services() {
               {service.specialty && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-                    ⭐ MI ESPECIALIDAD
+                    ⭐ NUESTRA ESPECIALIDAD
                   </span>
                 </div>
               )}
