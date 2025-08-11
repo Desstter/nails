@@ -4,16 +4,29 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function Gallery() {
-  const [selectedCategory, setSelectedCategory] = useState("todos");
+  const [viewMode, setViewMode] = useState<"categories" | "gallery">("categories");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const [imageLoadingStates, setImageLoadingStates] = useState<Record<number, boolean>>({});
 
   // Efecto para manejar el cambio de categoría con animación
   useEffect(() => {
-    // Reset expanded items when category changes
     setExpandedItem(null);
   }, [selectedCategory]);
+
+  // Función para navegar a una categoría
+  const navigateToCategory = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setViewMode("gallery");
+  };
+
+  // Función para volver a la vista de categorías
+  const goBackToCategories = () => {
+    setViewMode("categories");
+    setSelectedCategory(null);
+    setExpandedItem(null);
+  };
 
   const handleImageLoad = (itemId: number) => {
     setLoadedImages(prev => new Set([...prev, itemId]));
@@ -24,13 +37,48 @@ export default function Gallery() {
     setImageLoadingStates(prev => ({ ...prev, [itemId]: true }));
   };
 
+  // Categorías principales para vista inicial (sin "todos")
   const categories = [
-    { id: "todos", name: "Todos", count: 32 },
-    { id: "semi-permanente", name: "Semi-permanente Premium", count: 8 },
-    { id: "acrilicas-molde", name: "Uñas Acrílicas con Molde", count: 6 },
-    { id: "forrado-acrilico", name: "Forrado en Acrílico", count: 7 },
-    { id: "acrilicas-tips", name: "Uñas Acrílicas con Tips", count: 6 },
-    { id: "eventos-especiales", name: "Eventos Especiales", count: 5 }
+    { 
+      id: "semi-permanente", 
+      name: "Semi-permanente Premium", 
+      count: 8,
+      description: "Duración de 2-3 semanas con acabado impecable",
+      image: "/french-clasico.png",
+      gradient: "from-pink-400 to-rose-500"
+    },
+    { 
+      id: "acrilicas-molde", 
+      name: "Uñas Acrílicas con Molde", 
+      count: 6,
+      description: "Extensión natural con diferentes formas",
+      image: "/nail-geometrico.png",
+      gradient: "from-purple-400 to-pink-500"
+    },
+    { 
+      id: "forrado-acrilico", 
+      name: "Forrado en Acrílico", 
+      count: 7,
+      description: "Refuerzo y reparación de uñas naturales",
+      image: "/gel-dorado.png",
+      gradient: "from-yellow-400 to-orange-500"
+    },
+    { 
+      id: "acrilicas-tips", 
+      name: "Uñas Acrílicas con Tips", 
+      count: 6,
+      description: "Extensión con tips decorativas y naturales",
+      image: "/nail-geometrico.png",
+      gradient: "from-blue-400 to-purple-500"
+    },
+    { 
+      id: "eventos-especiales", 
+      name: "Eventos Especiales", 
+      count: 5,
+      description: "Diseños únicos para ocasiones especiales",
+      image: "/french-clasico.png",
+      gradient: "from-emerald-400 to-teal-500"
+    }
   ];
 
   // Gallery items - Trabajos organizados por tipo de servicio
@@ -78,46 +126,137 @@ export default function Gallery() {
     { id: 32, category: "eventos-especiales", title: "Año Nuevo", description: "Diseño festivo con brillos y colores especiales para celebrar", image: null, placeholder: "Foto real - Diseño año nuevo" }
   ];
 
-  const filteredItems = selectedCategory === "todos" 
-    ? galleryItems 
-    : galleryItems.filter(item => item.category === selectedCategory);
+  const filteredItems = selectedCategory 
+    ? galleryItems.filter(item => item.category === selectedCategory)
+    : [];
 
   return (
     <section id="galeria" className="section-padding bg-gradient-to-br from-gray-50 to-white">
       <div className="container-luxury" suppressHydrationWarning={true}>
+        {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-luxury-lg mb-6">
             Galería de <span className="gradient-gold">Nuestro Trabajo</span>
           </h2>
           <p className="text-premium max-w-2xl mx-auto">
-            Cada trabajo es único y personalizado. Aquí puedes ver algunos de nuestros 
-            diseños más destacados y la calidad que nos caracteriza.
+            {viewMode === "categories" 
+              ? "Elige el tipo de servicio que más te interese para ver nuestros trabajos especializados."
+              : "Cada trabajo es único y personalizado. Aquí puedes ver la calidad que nos caracteriza."
+            }
           </p>
         </div>
 
-        {/* Category Filter - Optimizado para móviles */}
-        <div className="overflow-x-auto pb-4 mb-8">
-          <div className="flex gap-3 min-w-max px-4 sm:px-0 sm:flex-wrap sm:justify-center">
-            {categories.map((category) => (
-              <button
+        {/* Vista de Categorías */}
+        {viewMode === "categories" && (
+          <div 
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12"
+            style={{ animation: "fadeInUp 0.8s ease-out" }}
+          >
+            {categories.map((category, index) => (
+              <div
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`flex-shrink-0 px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all duration-300 text-sm sm:text-base gallery-filter-btn ${
-                  selectedCategory === category.id
-                    ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white shadow-elegant"
-                    : "bg-white text-gray-600 hover:bg-yellow-50 hover:text-yellow-600 shadow-soft active:scale-95"
-                }`}
+                onClick={() => navigateToCategory(category.id)}
+                className="group relative bg-white rounded-3xl overflow-hidden shadow-soft hover:shadow-luxury transition-all duration-500 hover:transform hover:scale-105 cursor-pointer gallery-card"
+                style={{
+                  animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+                }}
               >
-                <span className="whitespace-nowrap">{category.name}</span>
-                <span className="ml-2 text-xs opacity-75">({category.count})</span>
-              </button>
+                {/* Imagen de fondo */}
+                <div className="aspect-[4/5] bg-gradient-to-br from-pink-100 to-yellow-100 overflow-hidden relative">
+                  <div className="relative w-full h-full">
+                    <img 
+                      src={category.image} 
+                      alt={category.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    {/* Overlay con gradiente */}
+                    <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient} opacity-60 category-card-gradient`}></div>
+                  </div>
+                  
+                  {/* Contenido superpuesto */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6">
+                    <div className="text-white">
+                      <div className="mb-2">
+                        <span className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium">
+                          {category.count} trabajos
+                        </span>
+                      </div>
+                      <h3 className="font-bold text-lg sm:text-xl mb-2 leading-tight">
+                        {category.name}
+                      </h3>
+                      <p className="text-sm opacity-90 mb-4 line-clamp-2">
+                        {category.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Ver más</span>
+                        <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
+        )}
 
-        {/* Gallery Grid - Responsive mejorado */}
-        {filteredItems.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-12">
+        {/* Vista de Galería de Categoría */}
+        {viewMode === "gallery" && (
+          <div style={{ animation: "fadeInUp 0.8s ease-out" }}>
+            {/* Botón Volver y Breadcrumb */}
+            <div className="flex items-center justify-between mb-8 bg-white rounded-2xl p-4 shadow-soft">
+              <button
+                onClick={goBackToCategories}
+                className="flex items-center gap-3 text-gray-600 hover:text-yellow-600 transition-colors duration-300 back-button-mobile"
+              >
+                <div className="w-10 h-10 bg-gray-100 hover:bg-yellow-100 rounded-full flex items-center justify-center transition-colors duration-300">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </div>
+                <div className="hidden sm:block">
+                  <span className="text-sm text-gray-500">Volver a</span>
+                  <div className="font-medium">Categorías de Servicios</div>
+                </div>
+                <div className="sm:hidden">
+                  <span className="font-medium">Volver</span>
+                </div>
+              </button>
+              
+              {/* Breadcrumb */}
+              <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500 breadcrumb-mobile">
+                <span>Inicio</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+                <span className="text-yellow-600 font-medium">
+                  {categories.find(cat => cat.id === selectedCategory)?.name}
+                </span>
+              </div>
+            </div>
+
+            {/* Título de la categoría actual */}
+            <div className="text-center mb-12">
+              <h3 className="text-elegant mb-3">
+                {categories.find(cat => cat.id === selectedCategory)?.name}
+              </h3>
+              <p className="text-premium max-w-xl mx-auto">
+                {categories.find(cat => cat.id === selectedCategory)?.description}
+              </p>
+              <div className="mt-4">
+                <span className="inline-block bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-medium">
+                  {filteredItems.length} trabajos disponibles
+                </span>
+              </div>
+            </div>
+
+            {/* Grid de trabajos de la categoría */}
+            {filteredItems.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-12">
             {filteredItems.map((item, index) => (
             <div
               key={item.id}
@@ -201,28 +340,33 @@ export default function Gallery() {
                 )}
               </div>
             </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-yellow-100 to-pink-100 rounded-full flex items-center justify-center">
-              <svg className="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <h3 className="text-elegant mb-2">No se encontraron trabajos</h3>
-            <p className="text-premium">No hay trabajos disponibles en esta categoría por el momento.</p>
-            <button 
-              onClick={() => setSelectedCategory("todos")}
-              className="mt-4 btn-secondary"
-            >
-              Ver todos los trabajos
-            </button>
+              ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-yellow-100 to-pink-100 rounded-full flex items-center justify-center">
+                  <svg className="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-elegant mb-2">No se encontraron trabajos</h3>
+                <p className="text-premium">No hay trabajos disponibles en esta categoría por el momento.</p>
+                <button 
+                  onClick={goBackToCategories}
+                  className="mt-4 btn-secondary"
+                >
+                  Volver a categorías
+                </button>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Before/After Section con placeholders para fotos reales */}
-        <div className="bg-white rounded-2xl p-8 shadow-elegant">
+        {/* Before/After Section - Solo en vista de categorías */}
+        {viewMode === "categories" && (
+          <div className="bg-white rounded-2xl p-8 shadow-elegant"
+            style={{ animation: "fadeInUp 1s ease-out 0.5s both" }}
+          >
           <h3 className="text-elegant text-center mb-4">Antes y Después</h3>
           <p className="text-center text-sm text-gray-600 mb-8">
             *Próximamente subiremos fotos reales de transformaciones de nuestras clientas
@@ -265,18 +409,27 @@ export default function Gallery() {
               <h4 className="font-medium text-gray-800">Resultado Final</h4>
               <p className="text-xs text-gray-500">Foto real próximamente</p>
             </div>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Call to Action */}
+        {/* Call to Action - Aparece en ambas vistas */}
         <div className="text-center mt-12">
           <p className="text-premium mb-6">
-            ¿Te gustó lo que viste? ¡Agenda tu cita y vive la experiencia completa!
+            {viewMode === "categories" 
+              ? "¿Te gustó lo que viste? ¡Agenda tu cita y vive la experiencia completa!"
+              : "¿Te interesa este servicio? ¡Contáctanos para agendar tu cita!"
+            }
           </p>
           <button 
             onClick={() => {
+              const categoryName = selectedCategory 
+                ? categories.find(cat => cat.id === selectedCategory)?.name 
+                : "servicios";
               const message = encodeURIComponent(
-                "Hola! Vi su galería y me encantó el trabajo. Me gustaría agendar una cita."
+                viewMode === "categories"
+                  ? "Hola! Vi su galería y me encantó el trabajo. Me gustaría agendar una cita."
+                  : `Hola! Me interesa el servicio de ${categoryName}. Me gustaría agendar una cita.`
               );
               window.open(`https://wa.me/573187229548?text=${message}`, "_blank");
             }}

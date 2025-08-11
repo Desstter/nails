@@ -343,3 +343,58 @@ body {
   backdrop-filter: blur(10px);
   background: rgba(255, 255, 255, 0.9);
 }
+
+/* Animaciones específicas para vistas de galería */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+/* Transiciones para cambio de vista */
+.view-transition-enter {
+  animation: slideInFromRight 0.5s ease-out;
+}
+
+.view-transition-exit {
+  animation: slideOutToLeft 0.3s ease-in;
+}
+
+/* Mejoras para botones de categoría */
+.category-card-gradient {
+  transition: opacity 0.3s ease;
+}
+
+.category-card:hover .category-card-gradient {
+  opacity: 0.4;
+}
+
+/* Breadcrumb mejorado para móviles */
+@media (max-width: 640px) {
+  .breadcrumb-mobile {
+    display: none;
+  }
+  
+  .back-button-mobile {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    padding: 12px;
+  }
+}
