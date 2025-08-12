@@ -501,48 +501,146 @@ export default function Gallery() {
           >
           <h3 className="text-elegant text-center mb-4">Antes y Después</h3>
           <p className="text-center text-sm text-gray-600 mb-8">
-            *Próximamente subiremos fotos reales de transformaciones de nuestras clientas
+            Transformaciones reales de nuestras clientas
           </p>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          {/* Versión móvil - Stack vertical */}
+          <div className="block sm:hidden space-y-6">
+            {/* Antes - Móvil */}
             <div className="text-center">
-              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl mb-4 flex items-center justify-center border-2 border-dashed border-gray-300">
-                <div className="text-gray-500">
-                  <svg className="w-10 h-10 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <p className="text-xs">ANTES</p>
-                  <p className="text-xs text-gray-400 mt-1">Uñas naturales</p>
-                </div>
-              </div>
-              <h4 className="font-medium text-gray-800">Estado Inicial</h4>
-              <p className="text-xs text-gray-500">Foto real próximamente</p>
-            </div>
-
-            <div className="text-center flex items-center justify-center">
-              <div className="text-yellow-600">
-                <div className="w-12 h-12 mx-auto bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xl">➡️</span>
-                </div>
-                <p className="text-xs mt-2">Transformación</p>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <div className="aspect-square bg-gradient-to-br from-yellow-100 to-pink-100 rounded-xl mb-4 flex items-center justify-center border-2 border-dashed border-yellow-300">
-                <div className="text-yellow-600">
-                  <div className="w-10 h-10 mx-auto mb-2 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center">
-                    <span className="text-white text-lg">✨</span>
+              <div className="relative aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden mb-3 shadow-soft">
+                {/* Imagen ANTES */}
+                <img 
+                  src="/Mano descansando sobre toalla blanca.png" 
+                  alt="Uñas antes del tratamiento"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-dashed border-gray-300" style={{ display: 'none' }}>
+                  <div className="text-gray-500 text-center">
+                    <div className="w-12 h-12 mx-auto mb-2 bg-gray-400 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-sm font-medium">ANTES</p>
+                    <p className="text-xs text-gray-400"></p>
                   </div>
-                
-                  <p className="text-xs">DESPUÉS</p>
-                  <p className="text-xs text-yellow-500 mt-1">Resultado premium</p>
+                </div>
+                {/* Badge ANTES */}
+                <div className="absolute top-3 left-3 bg-gray-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  ANTES
                 </div>
               </div>
-              <h4 className="font-medium text-gray-800">Resultado Final</h4>
-              <p className="text-xs text-gray-500">Foto real próximamente</p>
+              <h4 className="font-medium text-gray-800 text-sm">Estado Natural</h4>
             </div>
+
+            {/* Flecha de transformación - Móvil */}
+            <div className="flex justify-center">
+              <div className="text-yellow-600">
+                <div className="w-10 h-10 mx-auto bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center rotate-90">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </div>
+                <p className="text-xs mt-2 font-medium">Transformación</p>
+              </div>
             </div>
+
+            {/* Después - Móvil */}
+            <div className="text-center">
+              <div className="relative aspect-[4/3] bg-gradient-to-br from-yellow-100 to-pink-100 rounded-2xl overflow-hidden mb-3 shadow-soft">
+                {/* Placeholder para imagen DESPUÉS */}
+                <img 
+                  src="/Diseño minimalista en uñas acrílicas.png" 
+                  alt="Uñas después del tratamiento"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-pink-100 flex items-center justify-center border-2 border-dashed border-yellow-300" style={{ display: 'none' }}>
+                  <div className="text-yellow-600 text-center">
+                    <div className="w-12 h-12 mx-auto mb-2 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-sm font-medium">DESPUÉS</p>
+                    <p className="text-xs text-yellow-500">Agregar imagen aquí</p>
+                  </div>
+                </div>
+                {/* Badge DESPUÉS */}
+                <div className="absolute top-3 left-3 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  DESPUÉS
+                </div>
+              </div>
+              <h4 className="font-medium text-gray-800 text-sm">Resultado Premium</h4>
+            </div>
+          </div>
+
+          {/* Versión desktop - Horizontal */}
+          <div className="hidden sm:grid grid-cols-3 gap-8 items-center">
+            {/* Antes - Desktop */}
+            <div className="text-center">
+              <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-4 shadow-soft">
+                <img 
+                  src="/Mano descansando sobre toalla blanca.png" 
+                  alt="Uñas antes del tratamiento"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-dashed border-gray-300" style={{ display: 'none' }}>
+                  <div className="text-gray-500 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 bg-gray-400 rounded-full flex items-center justify-center">
+                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-base font-medium">ANTES</p>
+                    <p className="text-sm text-gray-400">Agregar imagen aquí</p>
+                  </div>
+                </div>
+                <div className="absolute top-4 left-4 bg-gray-600 text-white px-4 py-2 rounded-full text-sm font-medium">
+                  ANTES
+                </div>
+              </div>
+              <h4 className="font-medium text-gray-800">Estado Natural</h4>
+            </div>
+
+            {/* Flecha - Desktop */}
+            <div className="text-center">
+              <div className="text-yellow-600">
+                <div className="w-16 h-16 mx-auto bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center shadow-elegant">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </div>
+                <p className="text-sm mt-3 font-medium">Transformación Premium</p>
+              </div>
+            </div>
+
+            {/* Después - Desktop */}
+            <div className="text-center">
+              <div className="relative aspect-square bg-gradient-to-br from-yellow-100 to-pink-100 rounded-2xl overflow-hidden mb-4 shadow-soft">
+                <img 
+                  src="/Diseño minimalista en uñas acrílicas.png" 
+                  alt="Uñas después del tratamiento"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-pink-100 flex items-center justify-center border-2 border-dashed border-yellow-300" style={{ display: 'none' }}>
+                  <div className="text-yellow-600 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center">
+                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002 2v12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-base font-medium">DESPUÉS</p>
+                    <p className="text-sm text-yellow-500">Agregar imagen aquí</p>
+                  </div>
+                </div>
+                <div className="absolute top-4 left-4 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-4 py-2 rounded-full text-sm font-medium">
+                  DESPUÉS
+                </div>
+              </div>
+              <h4 className="font-medium text-gray-800">Resultado Premium</h4>
+            </div>
+          </div>
           </div>
         )}
 
