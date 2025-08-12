@@ -32,7 +32,7 @@ export default function Testimonials() {
     { number: "500+", label: "Clientes Satisfechas" },
     { number: "98%", label: "Satisfacción" },
     { number: "5.0", label: "Calificación Promedio" },
-    { number: "8", label: "Años de Experiencia" }
+    { number: "15", label: "Años de Experiencia" }
   ];
 
   return (
@@ -58,7 +58,7 @@ export default function Testimonials() {
                   <span className="text-white text-2xl font-bold">CS</span>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-semibold text-gray-800">Claudia Shirley Lopez</h3>
+                  <h3 className="text-2xl font-semibold text-gray-800">Shirley Lopez</h3>
                   <p className="text-yellow-600 font-medium">Nail Artist Profesional</p>
                   <div className="flex items-center gap-1 mt-1">
                     {[...Array(5)].map((_, i) => (
@@ -156,7 +156,7 @@ export default function Testimonials() {
         </div>
 
         {/* Video Testimonial Section */}
-        <div className="bg-gradient-to-r from-yellow-50 to-pink-50 rounded-2xl p-8 text-center border border-yellow-200">
+        {/* <div className="bg-gradient-to-r from-yellow-50 to-pink-50 rounded-2xl p-8 text-center border border-yellow-200">
           <h3 className="text-elegant mb-4">Video Testimonios</h3>
           <p className="text-premium mb-6">
             Escucha directamente de nuestras clientas sobre su experiencia con Bella Nails Studio
@@ -173,7 +173,7 @@ export default function Testimonials() {
               <p className="text-xs text-gray-500 mt-1">Próximamente</p>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Call to Action */}
         <div className="text-center mt-12">
