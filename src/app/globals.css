@@ -385,16 +385,113 @@ body {
   opacity: 0.4;
 }
 
-/* Breadcrumb mejorado para móviles */
+/* Navegación sticky optimizada */
+.sticky-nav {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Scroll horizontal suave para tabs */
+.tabs-container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Touch targets optimizados para móviles */
 @media (max-width: 640px) {
-  .breadcrumb-mobile {
-    display: none;
+  .nav-tab {
+    min-height: 44px;
+    touch-action: manipulation;
+    padding: 8px 16px !important;
+    font-size: 13px !important;
   }
   
-  .back-button-mobile {
-    width: 100%;
-    justify-content: center;
-    text-align: center;
-    padding: 12px;
+  .back-button {
+    min-height: 44px;
+    min-width: 80px;
+    touch-action: manipulation;
   }
+  
+  /* Grid más denso en móviles */
+  .gallery-grid-mobile {
+    gap: 8px;
+  }
+  
+  /* Cards más pequeñas en móvil */
+  .gallery-card-mobile {
+    border-radius: 12px;
+  }
+}
+
+/* Animaciones más rápidas para mobile */
+@media (max-width: 768px) {
+  .gallery-card {
+    transition-duration: 0.2s !important;
+  }
+  
+  .gallery-card:active {
+    transform: scale(0.95);
+  }
+}
+
+/* Estados de navegación */
+.nav-transition-enter {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Transición suave entre cambio de categorías */
+.gallery-transition {
+  animation: fadeInScale 0.5s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animación para tabs activos */
+.tab-active {
+  animation: tabHighlight 0.3s ease-out;
+}
+
+@keyframes tabHighlight {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Optimizaciones adicionales para performance */
+.gallery-card {
+  will-change: transform, opacity;
+}
+
+.sticky-nav {
+  will-change: backdrop-filter;
 }
