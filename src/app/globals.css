@@ -237,6 +237,87 @@ body {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+  
+  /* Optimizaciones para snap scroll en móvil */
+  .snap-x {
+    scroll-snap-type: x mandatory;
+  }
+  
+  .snap-center {
+    scroll-snap-align: center;
+  }
+  
+  /* Mejoras táctiles para service cards */
+  .service-card-mobile {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  
+  .service-card-mobile:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+  
+  /* Optimizaciones de performance para animaciones móviles */
+  .mobile-optimized {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+  
+  /* Reducir animaciones complejas en dispositivos de menor capacidad */
+  @media (prefers-reduced-motion: reduce) {
+    .service-card-mobile:active {
+      transform: none;
+    }
+    
+    .snap-x {
+      scroll-behavior: auto;
+    }
+  }
+  
+  /* Optimizar scroll en dispositivos táctiles */
+  .touch-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-stop: always;
+  }
+  
+  /* Contenedor que permite scroll vertical de página y horizontal de carrusel */
+  .carousel-container {
+    /* Permite scroll vertical por defecto */
+  }
+  
+  .carousel-scroller {
+    /* Touch action será manejado dinámicamente por JavaScript */
+    touch-action: pan-x pan-y;
+  }
+
+  /* Estilos para botones de navegación del carrusel */
+  .carousel-nav-btn {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+  }
+  
+  .carousel-nav-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.15);
+  }
+  
+  .carousel-nav-btn:active {
+    transform: scale(0.95);
+  }
+  
+  /* Indicadores de posición */
+  .carousel-dot {
+    transition: all 0.3s ease;
+    min-height: 16px;
+    min-width: 8px;
+  }
+  
+  .carousel-dot.active {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  }
 }
 
 /* Text clamp utility */
