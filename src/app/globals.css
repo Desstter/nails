@@ -487,6 +487,52 @@ body {
   }
 }
 
+/* Animaciones para dropdown móvil */
+.animate-dropdown-enter {
+  animation: dropdownSlideIn 0.2s ease-out;
+}
+
+@keyframes dropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Mejoras específicas para móviles */
+@media (max-width: 640px) {
+  /* Dropdown touch optimized */
+  .dropdown-container button {
+    min-height: 48px;
+    touch-action: manipulation;
+  }
+  
+  /* Área de touch más generosa */
+  .dropdown-container .dropdown-option {
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Feedback visual para touch */
+  .touch-manipulation:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Estados de focus para accesibilidad */
+.dropdown-container button:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: rgb(254 240 138);
+  ring-offset: 2px;
+}
+
 /* Optimizaciones adicionales para performance */
 .gallery-card {
   will-change: transform, opacity;
@@ -494,4 +540,16 @@ body {
 
 .sticky-nav {
   will-change: backdrop-filter;
+}
+
+/* Indicador visual sutil para mostrar que es clickeable */
+.category-selector {
+  background-image: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  background-size: 200% 200%;
+  background-position: 100% 0%;
+  transition: background-position 0.3s ease;
+}
+
+.category-selector:hover {
+  background-position: 0% 100%;
 }
