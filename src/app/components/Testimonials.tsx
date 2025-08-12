@@ -43,7 +43,7 @@ export default function Testimonials() {
   const generateStructuredData = () => ({
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Bella Nails Studio",
+    "name": "Joangel Nails Studio",
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "5.0",
@@ -65,7 +65,7 @@ export default function Testimonials() {
       "reviewBody": testimonial.comment,
       "publisher": {
         "@type": "Organization",
-        "name": "Bella Nails Studio"
+        "name": "Joangel Nails Studio"
       }
     }))
   });
@@ -226,7 +226,7 @@ export default function Testimonials() {
           <div className="text-center mt-12">
             <h3 className="text-elegant mb-4">¿Lista para vivir la experiencia?</h3>
             <p className="text-premium mb-6">
-              Únete a más de 500 mujeres que ya confían en Bella Nails Studio
+              Únete a más de 500 mujeres que ya confían en Joangel Nails Studio
             </p>
             <button 
               onClick={() => {
