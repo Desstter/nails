@@ -91,7 +91,7 @@ export default function Hero() {
                     <span className="text-white text-4xl">💅</span>
                   </div>
                   <h3 className="text-elegant text-gray-700 mb-4">
-                    Bella Nails Studio
+                    Joangel Nails Studio
                   </h3>
                   <p className="text-premium">
                     Elegancia y comodidad<br />

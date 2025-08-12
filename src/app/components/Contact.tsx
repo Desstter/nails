@@ -9,7 +9,7 @@ export default function Contact() {
   };
 
   const handleInstagramContact = () => {
-    window.open("https://instagram.com/bellanailsstudio", "_blank");
+    window.open("https://instagram.com/joangel_nails", "_blank");
   };
 
   const serviceAreas = [
@@ -146,7 +146,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-800">Instagram</h4>
-                  <p className="text-pink-600 font-medium">@bellanailsstudio</p>
+                  <p className="text-pink-600 font-medium">@joangel_nails</p>
                 </div>
               </div>
               <p className="text-sm text-gray-600 mb-4">
