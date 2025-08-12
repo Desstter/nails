@@ -83,13 +83,13 @@ export default function TrustSection() {
                   <span className="text-white text-2xl font-bold">CS</span>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-semibold text-gray-800">Claudia Shirley Lopez</h3>
+                  <h3 className="text-2xl font-semibold text-gray-800">Shirley Lopez</h3>
                   <p className="text-yellow-600 font-medium">Nail Artist Profesional</p>
                   <div className="flex items-center gap-1 mt-1">
                     {[...Array(5)].map((_, i) => (
                       <span key={i} className="text-yellow-400 text-sm">★</span>
                     ))}
-                    <span className="text-gray-500 text-sm ml-2">8 años de experiencia</span>
+                    <span className="text-gray-500 text-sm ml-2">15 años de experiencia</span>
                   </div>
                 </div>
               </div>

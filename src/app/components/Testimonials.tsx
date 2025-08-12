@@ -4,57 +4,27 @@ export default function Testimonials() {
   const testimonials = [
     {
       id: 1,
-      name: "Catalina Rodríguez",
-      location: "Ciudad Jardín",
-      rating: 5,
-      comment: "Increíble servicio! Claudia Shirley Lopez es súper profesional y sus productos son de primera calidad. La comodidad de tener el servicio en casa no tiene precio. Mis uñas nunca habían lucido tan hermosas.",
-      service: "Gel Premium",
-      image: "CR"
-    },
-    {
-      id: 2,
-      name: "Isabel Montenegro", 
-      location: "Santa Teresita",
-      rating: 5,
-      comment: "El mejor servicio de manicure que he tenido en Cali. Todo super higiénico, llegó puntual y el resultado quedó perfecto. Definitivamente volvería a solicitar el servicio.",
-      service: "Tratamiento VIP",
-      image: "IM"
-    },
-    {
-      id: 3,
       name: "Alejandra Vargas",
-      location: "El Peñón", 
       rating: 5,
       comment: "Excelente experiencia! Desde el primer contacto por WhatsApp hasta el servicio final, todo fue perfecto. Muy profesional y los precios son justos para la calidad que ofrece.",
-      service: "Manicure Clásico",
+      service: "Uñas Acrílicas con Molde",
       image: "AV"
     },
     {
-      id: 4,
+      id: 2,
       name: "Valeria Castaño",
-      location: "San Fernando",
       rating: 5,
-      comment: "Me encantó el servicio! Es súper cómodo no tener que salir de casa y el trabajo quedó hermoso. Claudia Shirley Lopez es muy detallista y se nota su experiencia. 100% recomendado.",
-      service: "Gel Premium",
+      comment: "Me encantó el servicio! Es súper cómodo no tener que salir de casa y el trabajo quedó hermoso. Muy detallista y se nota su experiencia. 100% recomendado.",
+      service: "Uñas Acrílicas con Molde",
       image: "VC"
     },
     {
       id: 5,
       name: "Daniela Herrera",
-      location: "Pance",
       rating: 5,
       comment: "Primera vez que uso un servicio a domicilio y superó todas mis expectativas. Muy profesional, equipos de calidad y un trato excepcional. Ya tengo agendada mi próxima cita.",
-      service: "Tratamiento VIP",
+      service: "Semi Permanente Premium",
       image: "DH"
-    },
-    {
-      id: 6,
-      name: "Natalia Ospina",
-      location: "Santa Rita",
-      rating: 5,
-      comment: "Servicio de 10! Muy responsable, puntual y el resultado es espectacular. Me encanta que use productos de tan buena calidad. Sin duda la recomiendo al 100%.",
-      service: "Gel Premium",
-      image: "NO"
     }
   ];
 
@@ -177,7 +147,6 @@ export default function Testimonials() {
                   <span className="text-white font-medium text-sm">{testimonial.image}</span>
                 </div>
                 <h4 className="font-medium text-gray-800">{testimonial.name}</h4>
-                <p className="text-sm text-gray-600">{testimonial.location}</p>
                 <div className="mt-2 inline-block bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs">
                   {testimonial.service}
                 </div>
