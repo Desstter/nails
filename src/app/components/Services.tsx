@@ -8,7 +8,7 @@ export default function Services() {
     {
       id: "semi-permanent",
       name: "✨ Semi Permanente Premium",
-      price: "COP $50.000",
+      price: "COP $60.000",
       duration: "75 min",
       description: "Técnica avanzada con acabado profesional de hasta 4 semanas. Ideal para manos impecables y brillantes por más tiempo.",
       features: [
@@ -270,14 +270,14 @@ export default function Services() {
                 </div>
               )}
               {service.specialty && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                  <span className="bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 text-white px-5 py-2.5 rounded-full text-xs md:text-sm font-bold shadow-xl whitespace-nowrap border-2 border-white/20">
+                <div className="absolute top-3 left-1/2 transform -translate-x-1/2 z-10">
+                  <span className="bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 text-white px-4 py-2 rounded-full text-xs md:text-sm font-bold shadow-xl whitespace-nowrap border-2 border-white/20">
                     ⭐ NUESTRA ESPECIALIDAD
                   </span>
                 </div>
               )}
 
-              <div className="text-center mb-6 pt-3">
+              <div className="text-center mb-6 pt-16">
                 <h3 itemProp="name" className="text-elegant mb-3 text-lg md:text-xl font-semibold leading-tight px-2">
                   {service.name}
                 </h3>
@@ -416,14 +416,14 @@ export default function Services() {
           <div className="inline-block bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-bold mb-3 md:mb-4">
             🎉 OFERTA ESPECIAL - PRIMERA CITA
           </div>
-          <h3 className="text-elegant mb-3 md:mb-4 text-xl md:text-2xl">¡2x1 en Gel Premium!</h3>
+          <h3 className="text-elegant mb-3 md:mb-4 text-xl md:text-2xl">¡2x1 en Semi Permanente Premium!</h3>
           <p className="text-premium mb-4 md:mb-6 text-base md:text-lg leading-relaxed">
-            En tu primera visita, lleva a una amiga y <strong>ambas pagan solo $70.000</strong> por el Gel Premium.
+            En tu primera visita, lleva a una amiga y <strong>ambas pagan solo $60.000</strong> por el Semi Permanente Premium.
             <br className="hidden md:block" />
             <span className="block md:inline text-sm text-gray-600 mt-2 md:mt-0">*Válido solo para nuevas clientas. Una promoción por persona.</span>
           </p>
           <button
-            onClick={() => handleBookService("Promoción 2x1 Gel Premium - Primera Cita")}
+            onClick={() => handleBookService("Promoción 2x1 Semi Permanente Premium - Primera Cita")}
             className="btn-primary text-base md:text-lg px-6 md:px-8 py-4 min-h-[48px] btn-touch active:scale-95"
           >
             Reservar Promoción
