@@ -15,8 +15,11 @@ export default function Gallery() {
     setExpandedItem(null);
   }, [selectedCategory]);
 
-  // Función para navegar a una categoría
+  // Función para navegar a una categoría con transición
   const navigateToCategory = (categoryId: string) => {
+    if (selectedCategory === categoryId) return; // Si ya está seleccionada, no hacer nada
+    
+    setExpandedItem(null); // Cerrar cualquier item expandido
     setSelectedCategory(categoryId);
     setViewMode("gallery");
   };
@@ -131,20 +134,63 @@ export default function Gallery() {
     : [];
 
   return (
-    <section id="galeria" className="section-padding bg-gradient-to-br from-gray-50 to-white">
-      <div className="container-luxury" suppressHydrationWarning={true}>
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-luxury-lg mb-6">
-            Galería de <span className="gradient-gold">Nuestro Trabajo</span>
-          </h2>
-          <p className="text-premium max-w-2xl mx-auto">
-            {viewMode === "categories" 
-              ? "Elige el tipo de servicio que más te interese para ver nuestros trabajos especializados."
-              : "Cada trabajo es único y personalizado. Aquí puedes ver la calidad que nos caracteriza."
-            }
-          </p>
+    <section id="galeria" className="bg-gradient-to-br from-gray-50 to-white">
+      {/* Header Principal - Solo en vista inicial */}
+      {viewMode === "categories" && (
+        <div className="section-padding">
+          <div className="container-luxury">
+            <div className="text-center mb-16">
+              <h2 className="text-luxury-lg mb-6">
+                Galería de <span className="gradient-gold">Nuestro Trabajo</span>
+              </h2>
+              <p className="text-premium max-w-2xl mx-auto">
+                Elige el tipo de servicio que más te interese para ver nuestros trabajos especializados.
+              </p>
+            </div>
+          </div>
         </div>
+      )}
+
+      {/* Navegación Fija - Solo aparece en vista de galería */}
+      {viewMode === "gallery" && (
+        <div className="sticky top-0 z-50 bg-white/95 sticky-nav border-b border-gray-100 shadow-soft nav-transition-enter">
+          <div className="container-luxury py-2 sm:py-3">
+            <div className="flex items-center gap-2 sm:gap-4">
+              {/* Botón Volver */}
+              <button
+                onClick={goBackToCategories}
+                className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 rounded-full bg-gray-100 hover:bg-yellow-100 text-gray-700 hover:text-yellow-700 transition-all duration-300 flex-shrink-0 back-button"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span className="text-sm font-medium">Inicio</span>
+              </button>
+
+              {/* Tabs de Categorías */}
+              <div className="flex-1 overflow-x-auto tabs-container">
+                <div className="flex gap-2 min-w-max pr-4">
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => navigateToCategory(category.id)}
+                      className={`flex-shrink-0 px-3 py-2 sm:px-4 sm:py-2 rounded-full text-sm font-medium transition-all duration-300 nav-tab ${
+                        selectedCategory === category.id
+                          ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white shadow-elegant tab-active"
+                          : "bg-white text-gray-600 hover:bg-yellow-50 hover:text-yellow-600 shadow-sm"
+                      }`}
+                    >
+                      <span className="whitespace-nowrap text-xs sm:text-sm">{category.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className={viewMode === "gallery" ? "" : "container-luxury"}>
 
         {/* Vista de Categorías */}
         {viewMode === "categories" && (
@@ -204,159 +250,87 @@ export default function Gallery() {
           </div>
         )}
 
-        {/* Vista de Galería de Categoría */}
+        {/* Vista de Galería de Categoría - Optimizada */}
         {viewMode === "gallery" && (
-          <div style={{ animation: "fadeInUp 0.8s ease-out" }}>
-            {/* Botón Volver y Breadcrumb */}
-            <div className="flex items-center justify-between mb-8 bg-white rounded-2xl p-4 shadow-soft">
-              <button
-                onClick={goBackToCategories}
-                className="flex items-center gap-3 text-gray-600 hover:text-yellow-600 transition-colors duration-300 back-button-mobile"
-              >
-                <div className="w-10 h-10 bg-gray-100 hover:bg-yellow-100 rounded-full flex items-center justify-center transition-colors duration-300">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </div>
-                <div className="hidden sm:block">
-                  <span className="text-sm text-gray-500">Volver a</span>
-                  <div className="font-medium">Categorías de Servicios</div>
-                </div>
-                <div className="sm:hidden">
-                  <span className="font-medium">Volver</span>
-                </div>
-              </button>
-              
-              {/* Breadcrumb */}
-              <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500 breadcrumb-mobile">
-                <span>Inicio</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-                <span className="text-yellow-600 font-medium">
-                  {categories.find(cat => cat.id === selectedCategory)?.name}
-                </span>
-              </div>
-            </div>
-
-            {/* Título de la categoría actual */}
-            <div className="text-center mb-12">
-              <h3 className="text-elegant mb-3">
-                {categories.find(cat => cat.id === selectedCategory)?.name}
-              </h3>
-              <p className="text-premium max-w-xl mx-auto">
-                {categories.find(cat => cat.id === selectedCategory)?.description}
-              </p>
-              <div className="mt-4">
-                <span className="inline-block bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-medium">
-                  {filteredItems.length} trabajos disponibles
-                </span>
-              </div>
-            </div>
-
-            {/* Grid de trabajos de la categoría */}
+          <div className="container-luxury py-6">
+            {/* Grid de trabajos - Sin header redundante */}
             {filteredItems.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-12">
-            {filteredItems.map((item, index) => (
-            <div
-              key={item.id}
-              className="group bg-white rounded-2xl overflow-hidden shadow-soft hover:shadow-luxury transition-all duration-500 hover:transform hover:scale-105 cursor-pointer gallery-card"
-              style={{
-                animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
-              }}
-              onClick={() => setExpandedItem(expandedItem === item.id ? null : item.id)}
-            >
-              {/* Image - Optimizada para móviles */}
-              <div className="aspect-square bg-gradient-to-br from-pink-100 to-yellow-100 overflow-hidden relative">
-                {item.image ? (
-                  <div className="relative w-full h-full">
-                    {imageLoadingStates[item.id] && (
-                      <div className="absolute inset-0 image-loading z-10"></div>
-                    )}
-                    <img 
-                      src={item.image} 
-                      alt={item.title}
-                      className={`w-full h-full object-cover group-hover:scale-110 transition-all duration-500 progressive-image ${
-                        loadedImages.has(item.id) ? 'loaded' : 'loading'
-                      }`}
-                      loading="lazy"
-                      onLoadStart={() => handleImageLoadStart(item.id)}
-                      onLoad={() => handleImageLoad(item.id)}
-                      onError={() => setImageLoadingStates(prev => ({ ...prev, [item.id]: false }))}
-                    />
-                  </div>
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center border-2 border-dashed border-yellow-300">
-                    <div className="text-center p-2 sm:p-4">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-2 sm:mb-3 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center">
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <p className="text-xs sm:text-sm text-gray-600 font-medium">{item.title}</p>
-                      <p className="text-xs text-yellow-600 mt-1">Foto real próximamente</p>
-                    </div>
-                  </div>
-                )}
-                {/* Overlay de información rápida en hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                  <div className="text-white p-3 w-full">
-                    <p className="text-sm font-medium">{item.title}</p>
-                    <p className="text-xs opacity-90 line-clamp-2">{item.description}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-3 sm:p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-medium text-gray-800 flex-1 text-sm sm:text-base">{item.title}</h4>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setExpandedItem(expandedItem === item.id ? null : item.id);
+              <div 
+                key={selectedCategory} // Key para forzar re-render en cambio de categoría
+                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 lg:gap-4 gallery-grid-mobile gallery-transition"
+              >
+                {filteredItems.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="group bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-luxury transition-all duration-300 hover:transform hover:scale-105 cursor-pointer gallery-card gallery-card-mobile"
+                    style={{
+                      animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`
                     }}
-                    className="ml-2 bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs font-medium transition-all duration-300 active:scale-95"
+                    onClick={() => setExpandedItem(expandedItem === item.id ? null : item.id)}
                   >
-                    {expandedItem === item.id ? "−" : "+"}
-                  </button>
-                </div>
-                <p className={`text-xs sm:text-sm text-gray-600 transition-all duration-300 ${
-                  expandedItem === item.id ? 'line-clamp-none' : 'line-clamp-2'
-                }`}>
-                  {expandedItem === item.id 
-                    ? `${item.description} - Técnica profesional con productos premium. Duración aproximada: 60-90 minutos. Resultado duradero y de alta calidad.`
-                    : item.description
-                  }
-                </p>
-                {/* Información adicional del servicio */}
-                {expandedItem === item.id && (
-                  <div className="mt-3 pt-3 border-t border-gray-100">
-                    <div className="flex flex-wrap gap-2 text-xs">
-                      <span className="bg-yellow-50 text-yellow-700 px-2 py-1 rounded-full">✨ Calidad premium</span>
-                      <span className="bg-pink-50 text-pink-700 px-2 py-1 rounded-full">🎨 Personalizable</span>
-                      <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded-full">⏰ Duradero</span>
+                    {/* Imagen optimizada y compacta */}
+                    <div className="aspect-square bg-gradient-to-br from-pink-100 to-yellow-100 overflow-hidden relative">
+                      {item.image ? (
+                        <div className="relative w-full h-full">
+                          {imageLoadingStates[item.id] && (
+                            <div className="absolute inset-0 image-loading z-10"></div>
+                          )}
+                          <img 
+                            src={item.image} 
+                            alt={item.title}
+                            className={`w-full h-full object-cover group-hover:scale-110 transition-all duration-500 progressive-image ${
+                              loadedImages.has(item.id) ? 'loaded' : 'loading'
+                            }`}
+                            loading="lazy"
+                            onLoadStart={() => handleImageLoadStart(item.id)}
+                            onLoad={() => handleImageLoad(item.id)}
+                            onError={() => setImageLoadingStates(prev => ({ ...prev, [item.id]: false }))}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center border-2 border-dashed border-yellow-300">
+                          <div className="text-center p-2">
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-1 sm:mb-2 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center">
+                              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                            <p className="text-xs text-yellow-600 font-medium">Próximamente</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Overlay de información minimalista */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                        <div className="text-white p-2 w-full">
+                          <p className="text-xs font-medium truncate">{item.title}</p>
+                        </div>
+                      </div>
                     </div>
+
+                    {/* Contenido compacto - Solo visible si está expandido */}
+                    {expandedItem === item.id && (
+                      <div className="p-3">
+                        <h4 className="font-medium text-gray-800 text-sm mb-2">{item.title}</h4>
+                        <p className="text-xs text-gray-600 mb-3">{item.description}</p>
+                        <div className="flex flex-wrap gap-1">
+                          <span className="bg-yellow-50 text-yellow-700 px-2 py-1 rounded-full text-xs">✨ Premium</span>
+                          <span className="bg-pink-50 text-pink-700 px-2 py-1 rounded-full text-xs">🎨 Personalizable</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
-              ))}
+                ))}
               </div>
             ) : (
               <div className="text-center py-12">
-                <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-yellow-100 to-pink-100 rounded-full flex items-center justify-center">
-                  <svg className="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-yellow-100 to-pink-100 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-                <h3 className="text-elegant mb-2">No se encontraron trabajos</h3>
-                <p className="text-premium">No hay trabajos disponibles en esta categoría por el momento.</p>
-                <button 
-                  onClick={goBackToCategories}
-                  className="mt-4 btn-secondary"
-                >
-                  Volver a categorías
-                </button>
+                <h3 className="text-lg font-medium mb-2">No hay trabajos disponibles</h3>
+                <p className="text-sm text-gray-600">Esta categoría se está preparando con nuevos diseños.</p>
               </div>
             )}
           </div>
