@@ -191,16 +191,37 @@ export default function Services() {
   }, [nextSlide, prevSlide]);
 
   return (
-    <section id="servicios" className="section-padding bg-white">
+    <section 
+      id="servicios" 
+      className="section-padding bg-white" 
+      itemScope 
+      itemType="https://schema.org/LocalBusiness"
+    >
       <div className="container-luxury">
         <div className="text-center mb-16">
-          <h2 className="text-luxury-lg mb-6">
+          <h2 itemProp="name" className="text-luxury-lg mb-6">
             Nuestros <span className="gradient-gold">Servicios Premium</span>
           </h2>
-          <p className="text-premium max-w-2xl mx-auto">
+          <p itemProp="description" className="text-premium max-w-2xl mx-auto">
             Cada servicio está diseñado para brindarte la máxima comodidad y elegancia. 
             Utilizamos solo productos de la más alta calidad y técnicas profesionales.
           </p>
+          
+          {/* Hidden SEO metadata */}
+          <div className="sr-only">
+            <span itemProp="address" itemScope itemType="https://schema.org/PostalAddress">
+              <span itemProp="addressLocality">Bogotá</span>
+              <span itemProp="addressCountry">Colombia</span>
+            </span>
+            <span itemProp="telephone">+57 318 722 9548</span>
+            <span itemProp="priceRange">$50,000 - $100,000 COP</span>
+            <span itemProp="hasOfferingCatalog" itemScope itemType="https://schema.org/OfferingCatalog">
+              <span itemProp="name">Servicios de Manicure y Uñas</span>
+              <span itemProp="itemListElement" itemScope itemType="https://schema.org/OfferCatalog">
+                <span itemProp="itemOffered">Semi Permanente, Uñas Acrílicas, Forrado en Acrílico</span>
+              </span>
+            </span>
+          </div>
         </div>
 
         {/* Carrusel de servicios */}
@@ -228,91 +249,136 @@ export default function Services() {
 
           <div ref={carouselRef} className="overflow-x-auto scrollbar-hide scroll-smooth carousel-scroller">
             <div className="flex gap-4 md:gap-6 pb-6 px-4 md:px-0 snap-x snap-mandatory mobile-optimized" style={{width: 'fit-content'}}>
-          {services.map((service) => (
-            <div
-              key={service.id}
-              className={`relative bg-white rounded-2xl p-6 md:p-8 shadow-elegant hover:shadow-luxury transition-all duration-300 border-2 flex-shrink-0 w-80 md:w-96 snap-center service-card-mobile ${
-                service.specialty
-                  ? "border-purple-300 transform hover:scale-105 ring-2 ring-purple-100" 
-                  : service.popular 
-                  ? "border-yellow-300 transform hover:scale-105" 
-                  : "border-gray-100 hover:border-yellow-200"
-              }`}
-            >
+              {services.map((service) => (
+                <article
+                  key={service.id}
+                  itemScope
+                  itemType="https://schema.org/Service"
+                  className={`relative bg-white rounded-3xl p-5 md:p-8 shadow-elegant hover:shadow-luxury transition-all duration-300 border-2 flex-shrink-0 w-80 md:w-96 snap-center service-card-mobile ${
+                    service.specialty
+                      ? "border-purple-400 bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30 transform hover:scale-[1.02] ring-2 ring-purple-200/50 shadow-purple-100/50" 
+                      : service.popular 
+                      ? "border-yellow-400 bg-gradient-to-br from-white via-yellow-50/20 to-orange-50/20 transform hover:scale-[1.02] shadow-yellow-100/50" 
+                      : "border-gray-200 hover:border-yellow-300 hover:shadow-yellow-100/30"
+                  }`}
+                >
               {service.popular && !service.specialty && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-4 py-2 rounded-full text-sm font-medium">
-                    Más Popular
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                  <span className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-white px-5 py-2 rounded-full text-xs md:text-sm font-bold shadow-lg whitespace-nowrap">
+                    ✨ MÁS POPULAR
                   </span>
                 </div>
               )}
               {service.specialty && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                  <span className="bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 text-white px-5 py-2.5 rounded-full text-xs md:text-sm font-bold shadow-xl whitespace-nowrap border-2 border-white/20">
                     ⭐ NUESTRA ESPECIALIDAD
                   </span>
                 </div>
               )}
 
-              <div className="text-center mb-6">
-                <h3 className="text-elegant mb-2 text-lg md:text-xl">{service.name}</h3>
-                <div className="flex items-baseline justify-center gap-2 mb-3">
-                  <span className="text-2xl md:text-3xl font-bold gradient-gold">{service.price}</span>
-                  <span className="text-gray-500 text-sm">/ {service.duration}</span>
+              <div className="text-center mb-6 pt-3">
+                <h3 itemProp="name" className="text-elegant mb-3 text-lg md:text-xl font-semibold leading-tight px-2">
+                  {service.name}
+                </h3>
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="text-center">
+                    <span 
+                      itemProp="offers" 
+                      itemScope 
+                      itemType="https://schema.org/Offer"
+                      className="block"
+                    >
+                      <span itemProp="price" className="text-2xl md:text-3xl font-bold gradient-gold whitespace-nowrap">
+                        {service.price}
+                      </span>
+                      <meta itemProp="priceCurrency" content="COP" />
+                    </span>
+                  </div>
+                  <div className="text-gray-400 text-lg">•</div>
+                  <div className="text-center">
+                    <span className="text-sm md:text-base text-gray-600 font-medium whitespace-nowrap">
+                      ⏱️ {service.duration}
+                    </span>
+                  </div>
                 </div>
-                <p className="text-premium text-sm leading-relaxed">
+                <p itemProp="description" className="text-premium text-sm md:text-base leading-relaxed px-2 text-gray-700">
                   {service.description}
                 </p>
               </div>
 
-              <ul className="space-y-2 md:space-y-3 mb-8">
-                {service.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-3">
-                    <div className="w-4 h-4 md:w-5 md:h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-gray-700 text-xs md:text-sm leading-tight">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="mb-8 px-1">
+                <ul className="space-y-3 md:space-y-3.5">
+                  {service.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3 group">
+                      <div className={`w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 transition-all duration-200 ${
+                        service.specialty 
+                          ? 'bg-gradient-to-r from-purple-100 to-pink-100 group-hover:from-purple-200 group-hover:to-pink-200' 
+                          : service.popular
+                          ? 'bg-gradient-to-r from-yellow-100 to-orange-100 group-hover:from-yellow-200 group-hover:to-orange-200'
+                          : 'bg-green-100 group-hover:bg-green-200'
+                      }`}>
+                        <svg className={`w-3 h-3 md:w-3.5 md:h-3.5 transition-colors duration-200 ${
+                          service.specialty 
+                            ? 'text-purple-600' 
+                            : service.popular
+                            ? 'text-yellow-600'
+                            : 'text-green-600'
+                        }`} fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <span className="text-gray-700 text-sm md:text-base leading-relaxed font-medium break-words hyphens-auto" lang="es">
+                        {feature.replace('✅ ', '')}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
               <button
                 onClick={() => handleBookService(service.name)}
-                className={`w-full py-4 md:py-3 px-6 rounded-lg font-medium transition-all duration-300 min-h-[48px] btn-touch ${
+                className={`w-full py-4 md:py-4 px-6 rounded-xl font-bold transition-all duration-300 min-h-[48px] btn-touch group overflow-hidden relative ${
                   service.specialty
-                    ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg transform hover:scale-105 active:scale-95"
+                    ? "bg-gradient-to-r from-purple-600 via-purple-700 to-pink-600 hover:from-purple-700 hover:via-purple-800 hover:to-pink-700 text-white shadow-xl hover:shadow-purple-300/50 transform hover:scale-[1.02] active:scale-[0.98] border-2 border-white/20"
                     : service.popular
-                    ? "btn-primary active:scale-95"
-                    : "bg-gray-50 hover:bg-yellow-50 text-gray-700 hover:text-yellow-700 border border-gray-200 hover:border-yellow-300 active:scale-95"
+                    ? "bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white shadow-lg hover:shadow-yellow-300/50 transform hover:scale-[1.02] active:scale-[0.98]"
+                    : "bg-gradient-to-r from-gray-50 to-gray-100 hover:from-yellow-50 hover:to-yellow-100 text-gray-800 hover:text-yellow-800 border-2 border-gray-200 hover:border-yellow-400 active:scale-[0.98] shadow-md hover:shadow-lg"
                 }`}
               >
-                <span className="text-sm md:text-base">Reservar Ahora</span>
+                <span className="relative z-10 flex items-center justify-center gap-2 text-sm md:text-base whitespace-nowrap">
+                  {service.specialty && <span>⭐</span>}
+                  {service.popular && !service.specialty && <span>✨</span>}
+                  Reservar Ahora
+                  <span className="group-hover:translate-x-1 transition-transform duration-200">📱</span>
+                </span>
+                {service.specialty && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[100%]"></div>
+                )}
               </button>
 
               {/* Payment Methods */}
-              <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="mt-5 pt-4 border-t border-gray-200/60">
                 <div className="text-center">
-                  <p className="text-xs text-gray-500 mb-2">Pago al finalizar:</p>
-                  <div className="flex items-center justify-center gap-3">
-                    <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-full">
-                      <span className="text-lg">💵</span>
-                      <span className="text-xs text-gray-600 hidden sm:block">Efectivo</span>
+                  <p className="text-xs font-medium text-gray-600 mb-3 whitespace-nowrap">💳 Métodos de Pago Aceptados</p>
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-green-50 to-green-100 px-3 py-2 rounded-lg border border-green-200/50 hover:shadow-sm transition-all duration-200">
+                      <span className="text-base">💵</span>
+                      <span className="text-xs font-medium text-green-800 whitespace-nowrap">Efectivo</span>
                     </div>
-                    <div className="flex items-center gap-1 bg-purple-50 px-2 py-1 rounded-full">
-                      <span className="text-lg">📱</span>
-                      <span className="text-xs text-gray-600 hidden sm:block">Nequi</span>
+                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-purple-50 to-purple-100 px-3 py-2 rounded-lg border border-purple-200/50 hover:shadow-sm transition-all duration-200">
+                      <span className="text-base">📱</span>
+                      <span className="text-xs font-medium text-purple-800 whitespace-nowrap">Nequi</span>
                     </div>
-                    <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full">
-                      <span className="text-lg">🏦</span>
-                      <span className="text-xs text-gray-600 hidden sm:block">Transferencia</span>
+                    <div className="flex items-center gap-1.5 bg-gradient-to-r from-blue-50 to-blue-100 px-3 py-2 rounded-lg border border-blue-200/50 hover:shadow-sm transition-all duration-200">
+                      <span className="text-base">🏦</span>
+                      <span className="text-xs font-medium text-blue-800 whitespace-nowrap">Banco</span>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+                </article>
+              ))}
             </div>
           </div>
           

@@ -318,6 +318,61 @@ body {
   .carousel-dot.active {
     background: linear-gradient(135deg, #fbbf24, #f59e0b);
   }
+
+  /* Mejoras específicas para tarjetas de servicios móviles */
+  .service-card-enhanced {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    will-change: transform, box-shadow;
+  }
+
+  /* Evitar text-break y line-break */
+  .no-break-text {
+    word-break: keep-all;
+    overflow-wrap: normal;
+    hyphens: none;
+  }
+
+  /* Animación shimmer para tarjeta especialidad */
+  @keyframes shimmer-specialty {
+    0% {
+      background-position: -200% 0%;
+    }
+    100% {
+      background-position: 200% 0%;
+    }
+  }
+
+  .specialty-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background-size: 200% 100%;
+    animation: shimmer-specialty 3s infinite;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Optimizaciones táctiles mejoradas */
+  .enhanced-touch {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Mejores gradientes para móvil */
+  .mobile-gradient-purple {
+    background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 25%, #c084fc 50%, #e879f9 75%, #f472b6 100%);
+  }
+
+  .mobile-gradient-gold {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 25%, #f97316 50%, #ea580c 75%, #dc2626 100%);
+  }
 }
 
 /* Text clamp utility */
