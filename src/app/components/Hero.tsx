@@ -77,7 +77,7 @@ export default function Hero() {
 
             {/* Indicadores de confianza simplificados */}
             <div className="text-center lg:text-left text-sm text-gray-600">
-              <p>500+ clientas satisfechas • 8 años experiencia • Caleña profesional</p>
+              <p>500+ clientas satisfechas • 15 años experiencia • Caleña profesional</p>
             </div>
           </div>
 

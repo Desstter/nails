@@ -83,7 +83,7 @@ export default function About() {
                   <span className="text-white font-medium text-sm">C</span>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-800 text-sm">Claudia Shirley Lopez</p>
+                  <p className="font-medium text-gray-800 text-sm">Shirley Lopez</p>
                   <p className="text-xs text-gray-500">Fundadora & Nail Artist</p>
                 </div>
               </div>
@@ -102,7 +102,7 @@ export default function About() {
                     </svg>
                   </div>
                   <h3 className="text-elegant text-gray-700 mb-4">
-                    Claudia Shirley Lopez
+                    Shirley Lopez
                   </h3>
                   <p className="text-premium">
                     "Tu belleza es mi inspiración"
@@ -114,7 +114,7 @@ export default function About() {
                       </svg>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">8 años de experiencia</p>
+                  <p className="text-xs text-gray-500 mt-2">15 años de experiencia</p>
                 </div>
               </div>
             </div>
