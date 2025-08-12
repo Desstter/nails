@@ -34,25 +34,32 @@ export default function FastBooking() {
 
   const services: Service[] = [
     {
-      id: "clasico",
-      name: "Manicure Clásico",
-      duration: 45,
-      price: "COP $45.000",
-      description: "Limado, cutícula, hidratación y esmaltado"
+      id: "semi-permanent",
+      name: "✨ Semi Permanente Premium",
+      duration: 75,
+      price: "COP $60.000",
+      description: "Técnica avanzada con acabado profesional de hasta 4 semanas. Ideal para manos impecables y brillantes por más tiempo."
     },
     {
-      id: "gel",
-      name: "Gel Premium",
-      duration: 60,
-      price: "COP $65.000", 
-      description: "Duración 2-3 semanas, resistente al agua"
+      id: "acrylic-mold",
+      name: "💅 Uñas Acrílicas con Molde",
+      duration: 120,
+      price: "COP $100.000",
+      description: "Diseño estructural personalizado para mayor resistencia y elegancia."
     },
     {
-      id: "vip",
-      name: "Tratamiento VIP",
+      id: "acrylic-coating",
+      name: "💖 Forrado en Acrílico",
       duration: 90,
-      price: "COP $95.000",
-      description: "Manicure + pedicure + masaje completo"
+      price: "COP $85.000",
+      description: "Refuerzo ideal para uñas naturales, más fuertes y duraderas sin perder la naturalidad."
+    },
+    {
+      id: "acrylic-tips",
+      name: "🌟 Uñas Acrílicas con Tips",
+      duration: 100,
+      price: "COP $80.000",
+      description: "Extensiones rápidas y perfectas para lucir uñas largas y estilizadas."
     }
   ];
 
