@@ -9,11 +9,27 @@ export default function Gallery() {
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const [imageLoadingStates, setImageLoadingStates] = useState<Record<number, boolean>>({});
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Efecto para manejar el cambio de categoría con animación
   useEffect(() => {
     setExpandedItem(null);
   }, [selectedCategory]);
+
+  // Efecto para cerrar dropdown al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isDropdownOpen) {
+        const target = event.target as Element;
+        if (!target.closest('.dropdown-container')) {
+          setIsDropdownOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isDropdownOpen]);
 
   // Función para navegar a una categoría con transición
   const navigateToCategory = (categoryId: string) => {
@@ -22,6 +38,12 @@ export default function Gallery() {
     setExpandedItem(null); // Cerrar cualquier item expandido
     setSelectedCategory(categoryId);
     setViewMode("gallery");
+    setIsDropdownOpen(false); // Cerrar dropdown en móvil
+  };
+
+  // Función para manejar el dropdown
+  const handleDropdownSelect = (categoryId: string) => {
+    navigateToCategory(categoryId);
   };
 
   // Función para volver a la vista de categorías
@@ -47,7 +69,7 @@ export default function Gallery() {
       name: "Semi-permanente Premium", 
       count: 8,
       description: "Duración de 2-3 semanas con acabado impecable",
-      image: "/french-clasico.png",
+      image: "/Manicura elegante con detalles dorados.png",
       gradient: "from-pink-400 to-rose-500"
     },
     { 
@@ -55,7 +77,7 @@ export default function Gallery() {
       name: "Uñas Acrílicas con Molde", 
       count: 6,
       description: "Extensión natural con diferentes formas",
-      image: "/nail-geometrico.png",
+      image: "/Arte de uñas moderno y detallado.png",
       gradient: "from-purple-400 to-pink-500"
     },
     { 
@@ -71,7 +93,7 @@ export default function Gallery() {
       name: "Uñas Acrílicas con Tips", 
       count: 6,
       description: "Extensión con tips decorativas y naturales",
-      image: "/nail-geometrico.png",
+      image: "/Diseño de uñas acrílicas coloridas.png",
       gradient: "from-blue-400 to-purple-500"
     },
     { 
@@ -79,7 +101,7 @@ export default function Gallery() {
       name: "Eventos Especiales", 
       count: 5,
       description: "Diseños únicos para ocasiones especiales",
-      image: "/french-clasico.png",
+      image: "/Arte de Uñas Navideñas Elegante.png",
       gradient: "from-emerald-400 to-teal-500"
     }
   ];
@@ -87,46 +109,49 @@ export default function Gallery() {
   // Gallery items - Trabajos organizados por tipo de servicio
   const galleryItems = [
     // Semi-permanente Premium
-    { id: 1, category: "semi-permanente", title: "French Elegante", description: "Manicure francés con acabado semi-permanente, duración 2-3 semanas", image: "/french-clasico.png", isRealImage: true },
-    { id: 2, category: "semi-permanente", title: "Nude Rosado", description: "Tono nude rosado con brillo natural, ideal para cualquier ocasión", image: null, placeholder: "Foto real - Semi-permanente nude rosado" },
-    { id: 3, category: "semi-permanente", title: "Rojo Clásico", description: "Rojo intenso duradero con acabado impecable", image: null, placeholder: "Foto real - Semi-permanente rojo clásico" },
-    { id: 4, category: "semi-permanente", title: "Dorado Premium", description: "Acabado dorado elegante con brillo duradero", image: "/gel-dorado.png", isRealImage: true },
-    { id: 5, category: "semi-permanente", title: "Rosa Pastel", description: "Tonos suaves perfectos para un look natural y sofisticado", image: null, placeholder: "Foto real - Semi-permanente rosa pastel" },
-    { id: 6, category: "semi-permanente", title: "Violeta Moderno", description: "Colores modernos con acabado profesional de larga duración", image: null, placeholder: "Foto real - Semi-permanente violeta" },
-    { id: 7, category: "semi-permanente", title: "Coral Vibrante", description: "Tono coral perfecto para temporada de verano", image: null, placeholder: "Foto real - Semi-permanente coral" },
-    { id: 8, category: "semi-permanente", title: "Beige Sofisticado", description: "Elegancia neutral para uso profesional y diario", image: null, placeholder: "Foto real - Semi-permanente beige" },
+    { id: 1, category: "semi-permanente", title: null, description: null, image: "/Manicura francesa con ojos de mal de ojo.png" , isRealImage: true },
+    { id: 2, category: "semi-permanente", title: null, description: null, image: "/Manicure elegante con detalles dorados.png", placeholder: "Foto real - Semi-permanente nude rosado" },
+    { id: 3, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente rojo clásico" },
+    { id: 4, category: "semi-permanente", title: null, description: null, image: null , isRealImage: true },
+    { id: 5, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente rosa pastel" },
+    { id: 6, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente violeta" },
+    { id: 7, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente coral" },
+    { id: 8, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente beige" },
 
     // Uñas Acrílicas con Molde
-    { id: 9, category: "acrilicas-molde", title: "Forma Almendra Natural", description: "Extensión con molde en forma almendra, look natural y elegante", image: null, placeholder: "Foto real - Acrílicas molde almendra" },
-    { id: 10, category: "acrilicas-molde", title: "Square Medium", description: "Forma cuadrada media con acabado perfecto y resistente", image: null, placeholder: "Foto real - Acrílicas molde cuadradas" },
-    { id: 11, category: "acrilicas-molde", title: "Coffin Shape", description: "Forma ataúd moderna y estilizada con técnica profesional", image: null, placeholder: "Foto real - Acrílicas molde coffin" },
-    { id: 12, category: "acrilicas-molde", title: "Stiletto Elegante", description: "Forma stiletto dramática con acabado impecable", image: null, placeholder: "Foto real - Acrílicas molde stiletto" },
-    { id: 13, category: "acrilicas-molde", title: "Round Clásico", description: "Forma redonda tradicional con acabado suave y natural", image: null, placeholder: "Foto real - Acrílicas molde redondas" },
-    { id: 14, category: "acrilicas-molde", title: "Edge Square", description: "Forma cuadrada con bordes definidos y acabado moderno", image: null, placeholder: "Foto real - Acrílicas molde edge square" },
+    { id: 9, category: "acrilicas-molde", title: null, description: null, image: "/Arte celestial en uñas elegantes.png", placeholder: "Foto real - Acrílicas molde almendra" },
+    { id: 10, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas detallado y vibrante.png", placeholder: "Foto real - Acrílicas molde cuadradas" },
+    { id: 11, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas moderno y detallado.png", placeholder: "Foto real - Acrílicas molde coffin" },
+    { id: 12, category: "acrilicas-molde", title: null, description: null, image: "/Arte de Uñas Navideñas Elegante.png", placeholder: "Foto real - Acrílicas molde stiletto" },
+    { id: 13, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas vibrante y moderno.png", placeholder: "Foto real - Acrílicas molde redondas" },
+    { id: 14, category: "acrilicas-molde", title: null, description: null, image: "/Arte en uñas con tips verde neón.png", placeholder: "Foto real - Acrílicas molde edge square" },
+    { id: 40, category: "acrilicas-molde", title: null, description: null, image: "/Manicura francesa con corazones abstractos.png", placeholder: "Foto real - Acrílicas molde edge square" },
+    { id: 41, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas elegante y detallado (2).png", placeholder: "Foto real - Acrílicas molde edge square" },
+    { id: 42, category: "acrilicas-molde", title: null, description: null, image: "/Arte en uñas con tips verde neón.png", placeholder: "Foto real - Acrílicas molde edge square" },
 
     // Forrado en Acrílico
-    { id: 15, category: "forrado-acrilico", title: "Refuerzo Natural", description: "Forrado que mantiene la forma natural con extra resistencia", image: null, placeholder: "Foto real - Forrado acrílico natural" },
-    { id: 16, category: "forrado-acrilico", title: "Forrado con Extensión Leve", description: "Ligera extensión con forrado para uñas más largas", image: null, placeholder: "Foto real - Forrado con extensión leve" },
-    { id: 17, category: "forrado-acrilico", title: "Reparación Premium", description: "Forrado especializado para reparar uñas rotas o débiles", image: null, placeholder: "Foto real - Forrado reparación" },
-    { id: 18, category: "forrado-acrilico", title: "Forrado Transparente", description: "Acabado transparente que respeta el color natural", image: null, placeholder: "Foto real - Forrado transparente" },
-    { id: 19, category: "forrado-acrilico", title: "Forrado con Color", description: "Combinación de forrado resistente con color semi-permanente", image: null, placeholder: "Foto real - Forrado con color" },
-    { id: 20, category: "forrado-acrilico", title: "Forrado Mate", description: "Acabado mate moderno sobre base de forrado resistente", image: null, placeholder: "Foto real - Forrado mate" },
-    { id: 21, category: "forrado-acrilico", title: "Forrado Francés", description: "French clásico sobre base de forrado para mayor duración", image: null, placeholder: "Foto real - Forrado francés" },
+    { id: 15, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con detalles botánicos.png", placeholder: "Foto real - Forrado acrílico natural" },
+    { id: 16, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con detalles gráficos.png", placeholder: "Foto real - Forrado con extensión leve" },
+    { id: 17, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con diseño botánico y geométrico.png", placeholder: "Foto real - Forrado reparación" },
+    { id: 18, category: "forrado-acrilico", title: null, description: null, image: "/Detalles elegantes de manicura francesa.png", placeholder: "Foto real - Forrado transparente" },
+    { id: 19, category: "forrado-acrilico", title: null, description: null, image: "/Diseño de uñas con detalles dorados.png", placeholder: "Foto real - Forrado con color" },
+    { id: 20, category: "forrado-acrilico", title: null, description: null, image: "/gel-dorado.png", placeholder: "Foto real - Forrado mate" },
+    { id: 21, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con Ojos Turcos.png", placeholder: "Foto real - Forrado francés" },
 
     // Uñas Acrílicas con Tips
-    { id: 22, category: "acrilicas-tips", title: "Tips Naturales", description: "Extensión con tips transparentes para look natural", image: null, placeholder: "Foto real - Acrílicas tips naturales" },
-    { id: 23, category: "acrilicas-tips", title: "Tips con Diseño", description: "Tips decoradas con patrones geométricos modernos", image: "/nail-geometrico.png", isRealImage: true },
-    { id: 24, category: "acrilicas-tips", title: "Tips Largas", description: "Extensión considerable con tips para uñas extra largas", image: null, placeholder: "Foto real - Tips largas" },
-    { id: 25, category: "acrilicas-tips", title: "Tips con French", description: "Combinación de tips con french clásico elegante", image: null, placeholder: "Foto real - Tips french" },
-    { id: 26, category: "acrilicas-tips", title: "Tips Coloridas", description: "Tips con colores vibrantes y acabados especiales", image: null, placeholder: "Foto real - Tips coloridas" },
-    { id: 27, category: "acrilicas-tips", title: "Tips Ombre", description: "Efecto degradado sobre tips para look moderno", image: null, placeholder: "Foto real - Tips ombre" },
+    { id: 22, category: "acrilicas-tips", title: null, description: null, image: "/Arte de uñas con mariposas y amor.png", placeholder: "Foto real - Acrílicas tips naturales" },
+    { id: 23, category: "acrilicas-tips", title: null, description: null, image: "/Arte en uñas con detalles geométricos.png", isRealImage: true },
+    { id: 24, category: "acrilicas-tips", title: null, description: null, image: "/Diseño de uñas acrílicas coloridas.png", placeholder: "Foto real - Tips largas" },
+    { id: 25, category: "acrilicas-tips", title: null, description: null, image: "/french-clasico.png", placeholder: "Foto real - Tips french" },
+    { id: 26, category: "acrilicas-tips", title: null, description: null, image: "/Diseño de uñas rojo y blanco.png", placeholder: "Foto real - Tips coloridas" },
+    { id: 27, category: "acrilicas-tips", title: null, description: null, image: null, placeholder: "Foto real - Tips ombre" },
 
     // Eventos Especiales
-    { id: 28, category: "eventos-especiales", title: "Novia Clásica", description: "Diseño especial para novias con detalles delicados y elegantes", image: null, placeholder: "Foto real - Diseño novia" },
-    { id: 29, category: "eventos-especiales", title: "Graduación Elegante", description: "Manicure sofisticada perfecta para ceremonias de graduación", image: null, placeholder: "Foto real - Diseño graduación" },
-    { id: 30, category: "eventos-especiales", title: "Fiesta de Gala", description: "Diseño con cristales y detalles dorados para eventos de gala", image: null, placeholder: "Foto real - Diseño gala" },
-    { id: 31, category: "eventos-especiales", title: "Quinceañera", description: "Diseño especial con toques juveniles y elegantes", image: null, placeholder: "Foto real - Diseño quinceañera" },
-    { id: 32, category: "eventos-especiales", title: "Año Nuevo", description: "Diseño festivo con brillos y colores especiales para celebrar", image: null, placeholder: "Foto real - Diseño año nuevo" }
+    { id: 28, category: "eventos-especiales", title: null, description: null, image: "/Arte de Uñas Navideñas Elegante.png", placeholder: "Foto real - Diseño novia" },
+    { id: 29, category: "eventos-especiales", title: null, description: null, image: "/Uñas con arte de copos de nieve.png", placeholder: "Foto real - Diseño graduación" },
+    { id: 30, category: "eventos-especiales", title: null, description: null, image: "/Manicura rosa con copos de nieve.png", placeholder: "Foto real - Diseño gala" },
+    { id: 31, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas navideño con Santa.png", placeholder: "Foto real - Diseño quinceañera" },
+    { id: 32, category: "eventos-especiales", title: null, description: null, image: null, placeholder: "Foto real - Diseño año nuevo" }
   ];
 
   const filteredItems = selectedCategory 
@@ -167,8 +192,62 @@ export default function Gallery() {
                 <span className="text-sm font-medium">Inicio</span>
               </button>
 
-              {/* Tabs de Categorías */}
-              <div className="flex-1 overflow-x-auto tabs-container">
+              {/* Dropdown Selector - Solo MÓVILES */}
+              <div className="relative flex-1 sm:hidden dropdown-container">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className={`w-full flex items-center justify-between px-4 py-2 bg-white border rounded-full shadow-sm font-medium text-sm transition-all duration-200 category-selector ${
+                    isDropdownOpen 
+                      ? "border-yellow-300 ring-2 ring-yellow-100 text-yellow-700" 
+                      : "border-gray-200 text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  <span className="truncate">
+                    {categories.find(cat => cat.id === selectedCategory)?.name || "Seleccionar servicio"}
+                  </span>
+                  <svg 
+                    className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Dropdown Menu */}
+                {isDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-luxury z-50 animate-dropdown-enter">
+                    <div className="py-2">
+                      {categories.map((category, index) => (
+                        <button
+                          key={category.id}
+                          onClick={() => handleDropdownSelect(category.id)}
+                          className={`w-full text-left px-4 py-3 transition-all duration-200 touch-manipulation dropdown-option ${
+                            selectedCategory === category.id
+                              ? "bg-yellow-50 text-yellow-700 font-medium"
+                              : "text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+                          }`}
+                          style={{
+                            animationDelay: `${index * 50}ms`
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm">{category.name}</span>
+                            {selectedCategory === category.id && (
+                              <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                          <span className="text-xs text-gray-500">{category.count} trabajos</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Tabs Horizontales - Solo DESKTOP */}
+              <div className="hidden sm:flex flex-1 overflow-x-auto tabs-container">
                 <div className="flex gap-2 min-w-max pr-4">
                   {categories.map((category) => (
                     <button
@@ -262,11 +341,10 @@ export default function Gallery() {
                 {filteredItems.map((item, index) => (
                   <div
                     key={item.id}
-                    className="group bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-luxury transition-all duration-300 hover:transform hover:scale-105 cursor-pointer gallery-card gallery-card-mobile"
+                    className="group bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-luxury transition-all duration-300 hover:transform hover:scale-105 gallery-card gallery-card-mobile"
                     style={{
                       animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`
                     }}
-                    onClick={() => setExpandedItem(expandedItem === item.id ? null : item.id)}
                   >
                     {/* Imagen optimizada y compacta */}
                     <div className="aspect-square bg-gradient-to-br from-pink-100 to-yellow-100 overflow-hidden relative">
@@ -277,7 +355,7 @@ export default function Gallery() {
                           )}
                           <img 
                             src={item.image} 
-                            alt={item.title}
+                            alt={`Trabajo de uñas ${item.category}`}
                             className={`w-full h-full object-cover group-hover:scale-110 transition-all duration-500 progressive-image ${
                               loadedImages.has(item.id) ? 'loaded' : 'loading'
                             }`}
@@ -300,25 +378,7 @@ export default function Gallery() {
                         </div>
                       )}
                       
-                      {/* Overlay de información minimalista */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                        <div className="text-white p-2 w-full">
-                          <p className="text-xs font-medium truncate">{item.title}</p>
-                        </div>
-                      </div>
                     </div>
-
-                    {/* Contenido compacto - Solo visible si está expandido */}
-                    {expandedItem === item.id && (
-                      <div className="p-3">
-                        <h4 className="font-medium text-gray-800 text-sm mb-2">{item.title}</h4>
-                        <p className="text-xs text-gray-600 mb-3">{item.description}</p>
-                        <div className="flex flex-wrap gap-1">
-                          <span className="bg-yellow-50 text-yellow-700 px-2 py-1 rounded-full text-xs">✨ Premium</span>
-                          <span className="bg-pink-50 text-pink-700 px-2 py-1 rounded-full text-xs">🎨 Personalizable</span>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
