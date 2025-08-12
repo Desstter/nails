@@ -10,6 +10,9 @@ export default function Gallery() {
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const [imageLoadingStates, setImageLoadingStates] = useState<Record<number, boolean>>({});
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
   // Efecto para manejar el cambio de categoría con animación
   useEffect(() => {
@@ -31,6 +34,63 @@ export default function Gallery() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isDropdownOpen]);
 
+  // Efecto para manejar tecla ESC, navegación y gestos táctiles
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isLightboxOpen) {
+        closeLightbox();
+      }
+      if ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && isLightboxOpen) {
+        navigateImage(event.key === 'ArrowLeft' ? 'prev' : 'next');
+      }
+    };
+
+    // Variables para gestos táctiles
+    let touchStartY = 0;
+    let touchStartX = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!isLightboxOpen) return;
+      
+      const touchEndY = e.changedTouches[0].clientY;
+      const touchEndX = e.changedTouches[0].clientX;
+      const deltaY = touchEndY - touchStartY;
+      const deltaX = touchEndX - touchStartX;
+      
+      // Swipe down para cerrar (mínimo 50px)
+      if (deltaY > 50 && Math.abs(deltaX) < Math.abs(deltaY)) {
+        closeLightbox();
+      }
+      // Swipe left para siguiente (mínimo 50px)
+      else if (deltaX < -50 && Math.abs(deltaY) < Math.abs(deltaX)) {
+        navigateImage('next');
+      }
+      // Swipe right para anterior (mínimo 50px)
+      else if (deltaX > 50 && Math.abs(deltaY) < Math.abs(deltaX)) {
+        navigateImage('prev');
+      }
+    };
+
+    if (isLightboxOpen) {
+      document.addEventListener('keydown', handleKeyPress);
+      document.addEventListener('touchstart', handleTouchStart, { passive: true });
+      document.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
+
+    // Cleanup: restaurar scroll del body al desmontar componente
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isLightboxOpen, currentImageIndex]);
+
   // Función para navegar a una categoría con transición
   const navigateToCategory = (categoryId: string) => {
     if (selectedCategory === categoryId) return; // Si ya está seleccionada, no hacer nada
@@ -51,6 +111,35 @@ export default function Gallery() {
     setViewMode("categories");
     setSelectedCategory(null);
     setExpandedItem(null);
+  };
+
+  // Funciones para el lightbox
+  const openLightbox = (imageSrc: string, imageIndex: number) => {
+    setExpandedImage(imageSrc);
+    setCurrentImageIndex(imageIndex);
+    setIsLightboxOpen(true);
+    document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+  };
+
+  const closeLightbox = () => {
+    setIsLightboxOpen(false);
+    setExpandedImage(null);
+    document.body.style.overflow = 'unset'; // Restaurar scroll del body
+  };
+
+  const navigateImage = (direction: 'prev' | 'next') => {
+    const imagesWithSrc = filteredItems.filter(item => item.image);
+    const totalImages = imagesWithSrc.length;
+    
+    if (direction === 'next') {
+      const nextIndex = (currentImageIndex + 1) % totalImages;
+      setCurrentImageIndex(nextIndex);
+      setExpandedImage(imagesWithSrc[nextIndex].image);
+    } else {
+      const prevIndex = currentImageIndex === 0 ? totalImages - 1 : currentImageIndex - 1;
+      setCurrentImageIndex(prevIndex);
+      setExpandedImage(imagesWithSrc[prevIndex].image);
+    }
   };
 
   const handleImageLoad = (itemId: number) => {
@@ -127,7 +216,7 @@ export default function Gallery() {
     { id: 14, category: "acrilicas-molde", title: null, description: null, image: "/Arte en uñas con tips verde neón.png", placeholder: "Foto real - Acrílicas molde edge square" },
     { id: 40, category: "acrilicas-molde", title: null, description: null, image: "/Manicura francesa con corazones abstractos.png", placeholder: "Foto real - Acrílicas molde edge square" },
     { id: 41, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas elegante y detallado (2).png", placeholder: "Foto real - Acrílicas molde edge square" },
-    { id: 42, category: "acrilicas-molde", title: null, description: null, image: "/Arte en uñas con tips verde neón.png", placeholder: "Foto real - Acrílicas molde edge square" },
+    { id: 27, category: "acrilicas-tips", title: null, description: null, image: null, placeholder: "Foto real - Tips ombre" },
 
     // Forrado en Acrílico
     { id: 15, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con detalles botánicos.png", placeholder: "Foto real - Forrado acrílico natural" },
@@ -151,7 +240,7 @@ export default function Gallery() {
     { id: 29, category: "eventos-especiales", title: null, description: null, image: "/Uñas con arte de copos de nieve.png", placeholder: "Foto real - Diseño graduación" },
     { id: 30, category: "eventos-especiales", title: null, description: null, image: "/Manicura rosa con copos de nieve.png", placeholder: "Foto real - Diseño gala" },
     { id: 31, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas navideño con Santa.png", placeholder: "Foto real - Diseño quinceañera" },
-    { id: 32, category: "eventos-especiales", title: null, description: null, image: null, placeholder: "Foto real - Diseño año nuevo" }
+    { id: 32, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas para Halloween.png", placeholder: "Foto real - Diseño año nuevo" }
   ];
 
   const filteredItems = selectedCategory 
@@ -341,9 +430,18 @@ export default function Gallery() {
                 {filteredItems.map((item, index) => (
                   <div
                     key={item.id}
-                    className="group bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-luxury transition-all duration-300 hover:transform hover:scale-105 gallery-card gallery-card-mobile"
+                    className={`group bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-luxury transition-all duration-300 hover:transform hover:scale-105 gallery-card gallery-card-mobile ${
+                      item.image ? 'cursor-pointer' : ''
+                    }`}
                     style={{
                       animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`
+                    }}
+                    onClick={() => {
+                      if (item.image) {
+                        const imagesWithSrc = filteredItems.filter(i => i.image);
+                        const imageIndex = imagesWithSrc.findIndex(i => i.id === item.id);
+                        openLightbox(item.image, imageIndex);
+                      }
                     }}
                   >
                     {/* Imagen optimizada y compacta */}
@@ -436,6 +534,7 @@ export default function Gallery() {
                   <div className="w-10 h-10 mx-auto mb-2 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center">
                     <span className="text-white text-lg">✨</span>
                   </div>
+                
                   <p className="text-xs">DESPUÉS</p>
                   <p className="text-xs text-yellow-500 mt-1">Resultado premium</p>
                 </div>
@@ -472,6 +571,76 @@ export default function Gallery() {
             Reservar Ahora
           </button>
         </div>
+
+        {/* Lightbox Modal */}
+        {isLightboxOpen && expandedImage && (
+          <div 
+            className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center lightbox-container lightbox-backdrop lightbox-modal"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                closeLightbox();
+              }
+            }}
+          >
+            {/* Botón cerrar */}
+            <button
+              onClick={closeLightbox}
+              className="absolute top-4 right-4 z-10 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white lightbox-btn"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Navegación anterior */}
+            {filteredItems.filter(item => item.image).length > 1 && (
+              <button
+                onClick={() => navigateImage('prev')}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white lightbox-btn"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Navegación siguiente */}
+            {filteredItems.filter(item => item.image).length > 1 && (
+              <button
+                onClick={() => navigateImage('next')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white lightbox-btn"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Imagen expandida */}
+            <div className="relative max-w-full max-h-full">
+              <img
+                src={expandedImage}
+                alt={`Trabajo de uñas ${selectedCategory}`}
+                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl lightbox-image lightbox-image-transition"
+                style={{
+                  animation: 'lightboxImageEnter 0.4s ease-out'
+                }}
+              />
+              
+              {/* Indicador de posición */}
+              {filteredItems.filter(item => item.image).length > 1 && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm lightbox-position-indicator">
+                  {currentImageIndex + 1} / {filteredItems.filter(item => item.image).length}
+                </div>
+              )}
+            </div>
+
+            {/* Instrucción para móviles */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-xs text-center sm:hidden max-w-xs">
+              Desliza ↓ para cerrar • ← → para navegar
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

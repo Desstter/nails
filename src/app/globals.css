@@ -553,3 +553,78 @@ body {
 .category-selector:hover {
   background-position: 0% 100%;
 }
+
+/* Animaciones para Lightbox */
+@keyframes lightboxImageEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animación del backdrop del lightbox */
+.lightbox-backdrop {
+  animation: backdropFadeIn 0.3s ease-out;
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Optimizaciones para lightbox en móviles */
+@media (max-width: 768px) {
+  /* Botones más grandes en móvil */
+  .lightbox-btn {
+    width: 48px !important;
+    height: 48px !important;
+    touch-action: manipulation;
+  }
+  
+  /* Imagen con mejor ajuste en móvil */
+  .lightbox-image {
+    max-height: 85vh !important;
+    max-width: 95vw !important;
+  }
+  
+  /* Padding más generoso en móvil */
+  .lightbox-container {
+    padding: 16px !important;
+  }
+}
+
+/* Estados de hover mejorados para lightbox */
+.lightbox-btn:hover {
+  transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-btn:active {
+  transform: scale(0.95);
+}
+
+/* Transición suave para cambio de imagen */
+.lightbox-image-transition {
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Indicador de posición estilizado */
+.lightbox-position-indicator {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Prevenir selección de texto en lightbox */
+.lightbox-modal * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
