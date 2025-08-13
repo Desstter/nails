@@ -55,6 +55,23 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* Explicit font-size for h1 elements within semantic HTML5 elements */
+/* This prevents browser deprecation warnings about h1 sizing within semantic contexts */
+section h1,
+article h1,
+aside h1,
+nav h1 {
+  font-size: inherit;
+}
+
+/* Ensure h1 elements with luxury classes maintain proper sizing */
+section h1.text-luxury-xl,
+article h1.text-luxury-xl,
+aside h1.text-luxury-xl,
+nav h1.text-luxury-xl {
+  font-size: 3.5rem;
+}
+
 .text-luxury-lg {
   font-family: var(--font-heading);
   font-size: 2.5rem;
