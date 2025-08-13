@@ -1,7 +1,22 @@
 "use client";
 
+declare global {
+  interface Window {
+    gtag: (command: string, targetId: string, parameters?: object) => void;
+  }
+}
+
 export default function Contact() {
   const handleWhatsAppContact = () => {
+    // Track Google Ads conversion
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-17469563871/OcVkCKCtuYUbEN_HkYpB',
+        'value': 1.0,
+        'currency': 'COP'
+      });
+    }
+    
     const message = encodeURIComponent(
       "Hola! Me gustaría obtener más información sobre sus servicios de manicure y pedicure premium a domicilio."
     );

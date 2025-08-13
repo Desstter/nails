@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 
+declare global {
+  interface Window {
+    gtag: (command: string, targetId: string, parameters?: object) => void;
+  }
+}
+
 interface Service {
   id: string;
   name: string;
@@ -154,6 +160,15 @@ export default function FastBooking() {
   };
 
   const sendWhatsAppBooking = () => {
+    // Track Google Ads conversion
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-17469563871/OcVkCKCtuYUbEN_HkYpB',
+        'value': 1.0,
+        'currency': 'COP'
+      });
+    }
+    
     const message = generateWhatsAppMessage();
     window.open(`https://wa.me/573187229548?text=${message}`, "_blank");
   };
