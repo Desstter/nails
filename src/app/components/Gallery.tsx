@@ -1,18 +1,63 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect, useCallback } from "react";
+// import Image from "next/image";
 
 export default function Gallery() {
   const [viewMode, setViewMode] = useState<"categories" | "gallery">("categories");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [expandedItem, setExpandedItem] = useState<number | null>(null);
+  const [, setExpandedItem] = useState<number | null>(null);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
   const [imageLoadingStates, setImageLoadingStates] = useState<Record<number, boolean>>({});
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+
+  // Gallery items - Trabajos organizados por tipo de servicio
+  const galleryItems = [
+    // Semi-permanente Premium
+    { id: 1, category: "semi-permanente", title: null, description: null, image: "/optimized/manicura-francesa-con-ojos-de-mal-de-ojo.webp" , isRealImage: true },
+    { id: 2, category: "semi-permanente", title: null, description: null, image: "/optimized/manicure-elegante-con-detalles-dorados.webp", placeholder: "Foto real - Semi-permanente nude rosado" },
+    { id: 3, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente rojo clásico" },
+    { id: 4, category: "semi-permanente", title: null, description: null, image: null , isRealImage: true },
+    { id: 5, category: "semi-permanente", title: null, description: null, image: "/optimized/french-clasico.webp", placeholder: "Foto real - Semi-permanente francesa" },
+    { id: 6, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente glitter" },
+    
+    // Uñas Acrílicas con Molde
+    { id: 7, category: "acrilicas-molde", title: null, description: null, image: "/optimized/arte-de-uñas-elegante-y-detallado.webp", placeholder: "Foto real - Acrílicas almendra" },
+    { id: 8, category: "acrilicas-molde", title: null, description: null, image: "/optimized/arte-de-uñas-elegante-y-detallado-2.webp", placeholder: "Foto real - Acrílicas cofín" },
+    { id: 9, category: "acrilicas-molde", title: null, description: null, image: "/optimized/arte-de-uñas-elegante-y-detallado-3.webp", placeholder: "Foto real - Acrílicas cuadradas" },
+    { id: 10, category: "acrilicas-molde", title: null, description: null, image: "/optimized/arte-de-uñas-moderno-y-detallado.webp", placeholder: "Foto real - Acrílicas stiletto" },
+    { id: 11, category: "acrilicas-molde", title: null, description: null, image: null, placeholder: "Foto real - Acrílicas ballerina" },
+    { id: 12, category: "acrilicas-molde", title: null, description: null, image: null, placeholder: "Foto real - Acrílicas redondas" },
+    
+    // Forrado en Acrílico
+    { id: 13, category: "forrado-acrilico", title: null, description: null, image: "/optimized/gel-dorado.webp", placeholder: "Foto real - Forrado refuerzo" },
+    { id: 14, category: "forrado-acrilico", title: null, description: null, image: null, placeholder: "Foto real - Forrado reparación" },
+    { id: 15, category: "forrado-acrilico", title: null, description: null, image: null, placeholder: "Foto real - Forrado extensión mínima" },
+    { id: 16, category: "forrado-acrilico", title: null, description: null, image: null, placeholder: "Foto real - Forrado refuerzo" },
+    { id: 17, category: "forrado-acrilico", title: null, description: null, image: null, placeholder: "Foto real - Forrado natural" },
+    { id: 18, category: "forrado-acrilico", title: null, description: null, image: null, placeholder: "Foto real - Forrado con color" },
+    { id: 19, category: "forrado-acrilico", title: null, description: null, image: null, placeholder: "Foto real - Forrado decorado" },
+    
+    // Uñas Acrílicas con Tips
+    { id: 20, category: "acrilicas-tips", title: null, description: null, image: "/optimized/diseño-de-uñas-acrílicas-coloridas.webp", placeholder: "Foto real - Tips naturales" },
+    { id: 21, category: "acrilicas-tips", title: null, description: null, image: null, placeholder: "Foto real - Tips francesas" },
+    { id: 22, category: "acrilicas-tips", title: null, description: null, image: null, placeholder: "Foto real - Tips decoradas" },
+    { id: 23, category: "acrilicas-tips", title: null, description: null, image: null, placeholder: "Foto real - Tips ombré" },
+    { id: 24, category: "acrilicas-tips", title: null, description: null, image: null, placeholder: "Foto real - Tips glitter" },
+    { id: 25, category: "acrilicas-tips", title: null, description: null, image: null, placeholder: "Foto real - Tips nail art" },
+    
+    // Eventos Especiales
+    { id: 26, category: "eventos-especiales", title: null, description: null, image: "/optimized/arte-de-uñas-navideñas-elegante.webp", placeholder: "Foto real - Diseño boda" },
+    { id: 27, category: "eventos-especiales", title: null, description: null, image: "/optimized/arte-de-uñas-vibrante-y-moderno.webp", placeholder: "Foto real - Diseño fiesta" },
+    { id: 28, category: "eventos-especiales", title: null, description: null, image: "/optimized/arte-de-uñas-con-detalles-botánicos.webp", placeholder: "Foto real - Diseño cocktail" },
+    { id: 29, category: "eventos-especiales", title: null, description: null, image: "/optimized/uñas-con-arte-de-copos-de-nieve.webp", placeholder: "Foto real - Diseño graduación" },
+    { id: 30, category: "eventos-especiales", title: null, description: null, image: "/optimized/manicura-rosa-con-copos-de-nieve.webp", placeholder: "Foto real - Diseño gala" },
+    { id: 31, category: "eventos-especiales", title: null, description: null, image: "/optimized/arte-de-uñas-navideño-con-santa.webp", placeholder: "Foto real - Diseño quinceañera" },
+    { id: 32, category: "eventos-especiales", title: null, description: null, image: "/optimized/arte-de-uñas-para-halloween.webp", placeholder: "Foto real - Diseño año nuevo" }
+  ];
 
   // Efecto para manejar el cambio de categoría con animación
   useEffect(() => {
@@ -127,8 +172,11 @@ export default function Gallery() {
     document.body.style.overflow = 'unset'; // Restaurar scroll del body
   };
 
-  const navigateImage = (direction: 'prev' | 'next') => {
-    const imagesWithSrc = filteredItems.filter(item => item.image);
+  const navigateImage = useCallback((direction: 'prev' | 'next') => {
+    const currentFilteredItems = selectedCategory 
+      ? galleryItems.filter(item => item.category === selectedCategory)
+      : [];
+    const imagesWithSrc = currentFilteredItems.filter(item => item.image);
     const totalImages = imagesWithSrc.length;
     
     if (direction === 'next') {
@@ -140,7 +188,7 @@ export default function Gallery() {
       setCurrentImageIndex(prevIndex);
       setExpandedImage(imagesWithSrc[prevIndex].image);
     }
-  };
+  }, [selectedCategory, currentImageIndex, galleryItems]);
 
   const handleImageLoad = (itemId: number) => {
     setLoadedImages(prev => new Set([...prev, itemId]));
@@ -158,7 +206,7 @@ export default function Gallery() {
       name: "Semi-permanente Premium", 
       count: 8,
       description: "Duración de 2-3 semanas con acabado impecable",
-      image: "/Manicura elegante con detalles dorados.png",
+      image: "/optimized/manicura-elegante-con-detalles-dorados.webp",
       gradient: "from-pink-400 to-rose-500"
     },
     { 
@@ -166,7 +214,7 @@ export default function Gallery() {
       name: "Uñas Acrílicas con Molde", 
       count: 6,
       description: "Extensión natural con diferentes formas",
-      image: "/Arte de uñas moderno y detallado.png",
+      image: "/optimized/arte-de-uñas-moderno-y-detallado.webp",
       gradient: "from-purple-400 to-pink-500"
     },
     { 
@@ -174,7 +222,7 @@ export default function Gallery() {
       name: "Forrado en Acrílico", 
       count: 7,
       description: "Refuerzo y reparación de uñas naturales",
-      image: "/gel-dorado.png",
+      image: "/optimized/gel-dorado.webp",
       gradient: "from-yellow-400 to-orange-500"
     },
     { 
@@ -182,7 +230,7 @@ export default function Gallery() {
       name: "Uñas Acrílicas con Tips", 
       count: 6,
       description: "Extensión con tips decorativas y naturales",
-      image: "/Diseño de uñas acrílicas coloridas.png",
+      image: "/optimized/diseño-de-uñas-acrílicas-coloridas.webp",
       gradient: "from-blue-400 to-purple-500"
     },
     { 
@@ -190,58 +238,11 @@ export default function Gallery() {
       name: "Eventos Especiales", 
       count: 5,
       description: "Diseños únicos para ocasiones especiales",
-      image: "/Arte de Uñas Navideñas Elegante.png",
+      image: "/optimized/arte-de-uñas-navideñas-elegante.webp",
       gradient: "from-emerald-400 to-teal-500"
     }
   ];
 
-  // Gallery items - Trabajos organizados por tipo de servicio
-  const galleryItems = [
-    // Semi-permanente Premium
-    { id: 1, category: "semi-permanente", title: null, description: null, image: "/Manicura francesa con ojos de mal de ojo.png" , isRealImage: true },
-    { id: 2, category: "semi-permanente", title: null, description: null, image: "/Manicure elegante con detalles dorados.png", placeholder: "Foto real - Semi-permanente nude rosado" },
-    { id: 3, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente rojo clásico" },
-    { id: 4, category: "semi-permanente", title: null, description: null, image: null , isRealImage: true },
-    { id: 5, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente rosa pastel" },
-    { id: 6, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente violeta" },
-    { id: 7, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente coral" },
-    { id: 8, category: "semi-permanente", title: null, description: null, image: null, placeholder: "Foto real - Semi-permanente beige" },
-
-    // Uñas Acrílicas con Molde
-    { id: 9, category: "acrilicas-molde", title: null, description: null, image: "/Arte celestial en uñas elegantes.png", placeholder: "Foto real - Acrílicas molde almendra" },
-    { id: 10, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas detallado y vibrante.png", placeholder: "Foto real - Acrílicas molde cuadradas" },
-    { id: 11, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas moderno y detallado.png", placeholder: "Foto real - Acrílicas molde coffin" },
-    { id: 12, category: "acrilicas-molde", title: null, description: null, image: "/Arte de Uñas Navideñas Elegante.png", placeholder: "Foto real - Acrílicas molde stiletto" },
-    { id: 13, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas vibrante y moderno.png", placeholder: "Foto real - Acrílicas molde redondas" },
-    { id: 14, category: "acrilicas-molde", title: null, description: null, image: "/Arte en uñas con tips verde neón.png", placeholder: "Foto real - Acrílicas molde edge square" },
-    { id: 40, category: "acrilicas-molde", title: null, description: null, image: "/Manicura francesa con corazones abstractos.png", placeholder: "Foto real - Acrílicas molde edge square" },
-    { id: 41, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas elegante y detallado (2).png", placeholder: "Foto real - Acrílicas molde edge square" },
-    { id: 27, category: "acrilicas-tips", title: null, description: null, image: null, placeholder: "Foto real - Tips ombre" },
-
-    // Forrado en Acrílico
-    { id: 15, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con detalles botánicos.png", placeholder: "Foto real - Forrado acrílico natural" },
-    { id: 16, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con detalles gráficos.png", placeholder: "Foto real - Forrado con extensión leve" },
-    { id: 17, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con diseño botánico y geométrico.png", placeholder: "Foto real - Forrado reparación" },
-    { id: 18, category: "forrado-acrilico", title: null, description: null, image: "/Detalles elegantes de manicura francesa.png", placeholder: "Foto real - Forrado transparente" },
-    { id: 19, category: "forrado-acrilico", title: null, description: null, image: "/Diseño de uñas con detalles dorados.png", placeholder: "Foto real - Forrado con color" },
-    { id: 20, category: "forrado-acrilico", title: null, description: null, image: "/gel-dorado.png", placeholder: "Foto real - Forrado mate" },
-    { id: 21, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con Ojos Turcos.png", placeholder: "Foto real - Forrado francés" },
-
-    // Uñas Acrílicas con Tips
-    { id: 22, category: "acrilicas-tips", title: null, description: null, image: "/Arte de uñas con mariposas y amor.png", placeholder: "Foto real - Acrílicas tips naturales" },
-    { id: 23, category: "acrilicas-tips", title: null, description: null, image: "/Arte en uñas con detalles geométricos.png", isRealImage: true },
-    { id: 24, category: "acrilicas-tips", title: null, description: null, image: "/Diseño de uñas acrílicas coloridas.png", placeholder: "Foto real - Tips largas" },
-    { id: 25, category: "acrilicas-tips", title: null, description: null, image: "/french-clasico.png", placeholder: "Foto real - Tips french" },
-    { id: 26, category: "acrilicas-tips", title: null, description: null, image: "/Diseño de uñas rojo y blanco.png", placeholder: "Foto real - Tips coloridas" },
-    { id: 27, category: "acrilicas-tips", title: null, description: null, image: null, placeholder: "Foto real - Tips ombre" },
-
-    // Eventos Especiales
-    { id: 28, category: "eventos-especiales", title: null, description: null, image: "/Arte de Uñas Navideñas Elegante.png", placeholder: "Foto real - Diseño novia" },
-    { id: 29, category: "eventos-especiales", title: null, description: null, image: "/Uñas con arte de copos de nieve.png", placeholder: "Foto real - Diseño graduación" },
-    { id: 30, category: "eventos-especiales", title: null, description: null, image: "/Manicura rosa con copos de nieve.png", placeholder: "Foto real - Diseño gala" },
-    { id: 31, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas navideño con Santa.png", placeholder: "Foto real - Diseño quinceañera" },
-    { id: 32, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas para Halloween.png", placeholder: "Foto real - Diseño año nuevo" }
-  ];
 
   const filteredItems = selectedCategory 
     ? galleryItems.filter(item => item.category === selectedCategory)
@@ -511,7 +512,7 @@ export default function Gallery() {
               <div className="relative aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden mb-3 shadow-soft">
                 {/* Imagen ANTES */}
                 <img 
-                  src="/Mano descansando sobre toalla blanca.png" 
+                  src="/optimized/mano-descansando-sobre-toalla-blanca.webp" 
                   alt="Uñas antes del tratamiento"
                   className="w-full h-full object-cover"
                 />
@@ -551,7 +552,7 @@ export default function Gallery() {
               <div className="relative aspect-[4/3] bg-gradient-to-br from-yellow-100 to-pink-100 rounded-2xl overflow-hidden mb-3 shadow-soft">
                 {/* Placeholder para imagen DESPUÉS */}
                 <img 
-                  src="/Diseño minimalista en uñas acrílicas.png" 
+                  src="/optimized/diseño-minimalista-en-uñas-acrílicas.webp" 
                   alt="Uñas después del tratamiento"
                   className="w-full h-full object-cover"
                 />
@@ -581,7 +582,7 @@ export default function Gallery() {
             <div className="text-center">
               <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-4 shadow-soft">
                 <img 
-                  src="/Mano descansando sobre toalla blanca.png" 
+                  src="/optimized/mano-descansando-sobre-toalla-blanca.webp" 
                   alt="Uñas antes del tratamiento"
                   className="w-full h-full object-cover"
                 />
@@ -619,7 +620,7 @@ export default function Gallery() {
             <div className="text-center">
               <div className="relative aspect-square bg-gradient-to-br from-yellow-100 to-pink-100 rounded-2xl overflow-hidden mb-4 shadow-soft">
                 <img 
-                  src="/Diseño minimalista en uñas acrílicas.png" 
+                  src="/optimized/diseño-minimalista-en-uñas-acrílicas.webp" 
                   alt="Uñas después del tratamiento"
                   className="w-full h-full object-cover"
                 />

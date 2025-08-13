@@ -62,13 +62,13 @@ interface ImagePriorityProviderProps {
 export function ImagePriorityProvider({ children, page = 'home' }: ImagePriorityProviderProps) {
   const [currentPage, setCurrentPage] = useState(page);
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
-  const [totalImages, setTotalImages] = useState(0);
+  const [totalImages] = useState(0);
 
   // Obtener configuración para la página actual
   const config = PAGE_CONFIGS[currentPage] || DEFAULT_PRIORITY_CONFIG;
 
   // Detectar viewport para ajustar estrategias
-  const [isDesktop, setIsDesktop] = useState(true);
+  const [, setIsDesktop] = useState(true);
   const [connectionSpeed, setConnectionSpeed] = useState<'slow' | 'fast'>('fast');
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export function ImagePriorityProvider({ children, page = 'home' }: ImagePriority
 
     // Detectar velocidad de conexión
     const checkConnection = () => {
-      const nav = navigator as any;
+      const nav = navigator as { connection?: { effectiveType: string } };
       if (nav.connection) {
         const effectiveType = nav.connection.effectiveType;
         setConnectionSpeed(effectiveType === 'slow-2g' || effectiveType === '2g' ? 'slow' : 'fast');
@@ -149,7 +149,7 @@ export function ImagePriorityProvider({ children, page = 'home' }: ImagePriority
   };
 
   // Determinar sizes attribute optimizado
-  const getSizes = (context: string, index?: number): string => {
+  const getSizes = (context: string): string => {
     const sizeMap: Record<string, string> = {
       'hero': '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw',
       'category-card': '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw',

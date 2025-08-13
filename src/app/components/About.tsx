@@ -74,9 +74,9 @@ export default function About() {
             <div className="bg-gradient-to-r from-yellow-50 to-pink-50 rounded-xl p-6 border border-yellow-200">
               <h4 className="font-medium text-gray-800 mb-3">Mi Compromiso Contigo</h4>
               <p className="text-sm text-gray-600">
-                "Cada cliente es única y especial. Mi objetivo es no solo embellecer tus uñas, 
+                &ldquo;Cada cliente es única y especial. Mi objetivo es no solo embellecer tus uñas, 
                 sino brindarte una experiencia relajante y de lujo que te haga sentir mimada y especial. 
-                Tu satisfacción es mi mayor recompensa."
+                Tu satisfacción es mi mayor recompensa.&rdquo;
               </p>
               <div className="mt-4 flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center">
@@ -105,7 +105,7 @@ export default function About() {
                     Shirley Lopez
                   </h3>
                   <p className="text-premium">
-                    "Tu belleza es mi inspiración"
+                    &ldquo;Tu belleza es mi inspiración&rdquo;
                   </p>
                   <div className="mt-6 flex justify-center space-x-1">
                     {[...Array(5)].map((_, i) => (

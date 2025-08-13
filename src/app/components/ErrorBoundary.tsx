@@ -137,7 +137,7 @@ class ErrorBoundary extends Component<Props, State> {
   };
 
   render() {
-    const { hasError, error, errorInfo } = this.state;
+    const { hasError, error } = this.state;
     const { children, fallback } = this.props;
 
     if (hasError) {
@@ -288,7 +288,7 @@ export function SectionErrorBoundary({
                 Sección temporalmente no disponible
               </h3>
               <p className="text-sm text-gray-600">
-                La sección "{sectionName}" está experimentando problemas técnicos. 
+                La sección &ldquo;{sectionName}&rdquo; está experimentando problemas técnicos. 
                 Intenta recargar la página.
               </p>
             </div>

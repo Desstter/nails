@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 export default function Testimonials() {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [,] = useState(0);
 
   const testimonials = [
     {
@@ -99,7 +99,7 @@ export default function Testimonials() {
               </div>
               
               <blockquote className="text-gray-700 text-center mb-6 italic">
-                "{testimonials[0].comment}"
+                &ldquo;{testimonials[0].comment}&rdquo;
               </blockquote>
               
               <div className="text-center">
@@ -205,7 +205,7 @@ export default function Testimonials() {
 
                 {/* Comment */}
                 <blockquote className="text-gray-700 text-center mb-6 italic">
-                  "{testimonial.comment}"
+                  &ldquo;{testimonial.comment}&rdquo;
                 </blockquote>
 
                 {/* Client Info */}

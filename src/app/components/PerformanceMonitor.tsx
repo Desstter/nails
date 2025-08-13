@@ -36,7 +36,7 @@ export default function PerformanceMonitor({
         // Largest Contentful Paint (LCP)
         const lcpObserver = new PerformanceObserver((entryList) => {
           const entries = entryList.getEntries();
-          const lastEntry = entries[entries.length - 1] as any;
+          const lastEntry = entries[entries.length - 1] as PerformanceEntry & { startTime: number };
           if (lastEntry) {
             metricsRef.current.lcp = lastEntry.startTime;
             updateMetrics();
@@ -47,7 +47,7 @@ export default function PerformanceMonitor({
         // First Input Delay (FID)
         const fidObserver = new PerformanceObserver((entryList) => {
           const entries = entryList.getEntries();
-          entries.forEach((entry: any) => {
+          entries.forEach((entry: PerformanceEntry & { processingStart?: number; startTime: number }) => {
             if (entry.processingStart && entry.startTime) {
               metricsRef.current.fid = entry.processingStart - entry.startTime;
               updateMetrics();
@@ -60,8 +60,8 @@ export default function PerformanceMonitor({
         let clsValue = 0;
         const clsObserver = new PerformanceObserver((entryList) => {
           const entries = entryList.getEntries();
-          entries.forEach((entry: any) => {
-            if (!entry.hadRecentInput) {
+          entries.forEach((entry: PerformanceEntry & { hadRecentInput?: boolean; value?: number }) => {
+            if (!entry.hadRecentInput && entry.value !== undefined) {
               clsValue += entry.value;
               metricsRef.current.cls = clsValue;
               updateMetrics();
@@ -73,7 +73,7 @@ export default function PerformanceMonitor({
         // First Contentful Paint (FCP)
         const fcpObserver = new PerformanceObserver((entryList) => {
           const entries = entryList.getEntries();
-          entries.forEach((entry: any) => {
+          entries.forEach((entry: PerformanceEntry & { startTime: number }) => {
             if (entry.name === 'first-contentful-paint') {
               metricsRef.current.fcp = entry.startTime;
               updateMetrics();
@@ -92,8 +92,8 @@ export default function PerformanceMonitor({
     // Monitorear métricas de navegación
     const observeNavigationTiming = () => {
       if ('performance' in window) {
-        const navigation = performance.getEntriesByType('navigation')[0] as any;
-        if (navigation) {
+        const navigation = performance.getEntriesByType('navigation')[0] as PerformanceEntry & { responseStart?: number; requestStart?: number };
+        if (navigation && navigation.responseStart && navigation.requestStart) {
           metricsRef.current.ttfb = navigation.responseStart - navigation.requestStart;
           updateMetrics();
         }
@@ -104,12 +104,12 @@ export default function PerformanceMonitor({
     const observeImagePerformance = () => {
       let totalImages = 0;
       let failedImages = 0;
-      let imageLoadTimes: number[] = [];
+      const imageLoadTimes: number[] = [];
 
       // Observer para recursos de imagen
       const resourceObserver = new PerformanceObserver((entryList) => {
         const entries = entryList.getEntries();
-        entries.forEach((entry: any) => {
+        entries.forEach((entry: PerformanceEntry & { initiatorType?: string; responseEnd?: number; startTime: number }) => {
           if (entry.initiatorType === 'img' || 
               entry.name.match(/\.(jpg|jpeg|png|gif|webp|avif)$/i)) {
             totalImages++;
@@ -193,7 +193,7 @@ export default function PerformanceMonitor({
         url: window.location.href,
         userAgent: navigator.userAgent,
         timestamp: new Date().toISOString(),
-        connection: (navigator as any).connection?.effectiveType || 'unknown',
+        connection: (navigator as { connection?: { effectiveType: string } }).connection?.effectiveType || 'unknown',
         viewport: {
           width: window.innerWidth,
           height: window.innerHeight
@@ -227,7 +227,7 @@ export default function PerformanceMonitor({
   // Exponer métricas globalmente para debugging
   useEffect(() => {
     if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-      (window as any).__performanceMetrics = getMetrics;
+      (window as { __performanceMetrics?: () => PerformanceMetrics }).__performanceMetrics = getMetrics;
     }
   }, []);
 
