@@ -1,5 +1,6 @@
 "use client";
 import OptimizedImage from '../components/OptimizedImage';
+import Link from 'next/link';
 
 export default function TestImages() {
   const testImages = [
@@ -89,12 +90,12 @@ export default function TestImages() {
         </div>
 
         <div className="mt-8 text-center">
-          <a 
+          <Link 
             href="/"
             className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-6 py-3 rounded-lg font-medium hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300"
           >
             ← Volver al Sitio Principal
-          </a>
+          </Link>
         </div>
       </div>
     </div>

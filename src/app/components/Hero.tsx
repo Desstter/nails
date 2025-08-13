@@ -1,9 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
 export default function Hero() {
-  const [showBooking, setShowBooking] = useState(false);
 
   const handleWhatsAppBooking = () => {
     const message = encodeURIComponent(

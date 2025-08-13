@@ -125,7 +125,7 @@ export default function OptimizedImage({
             setIsLoading(false);
             return;
           }
-        } catch (error) {
+        } catch {
           // Continuar con el siguiente formato
           continue;
         }
@@ -137,7 +137,7 @@ export default function OptimizedImage({
     }
 
     findBestFormat();
-  }, [src]);
+  }, [src, imageSources, isOptimizedPath]);
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -179,6 +179,7 @@ export default function OptimizedImage({
           {...imageProps}
           fill
           className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+          alt={alt || ''}
         />
         {hasError && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
@@ -201,6 +202,7 @@ export default function OptimizedImage({
         {...imageProps}
         width={width}
         height={height}
+        alt={alt || ''}
       />
       {hasError && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
