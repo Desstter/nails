@@ -15,7 +15,7 @@ export default function AnalyticsTracker() {
   useEffect(() => {
     const trackedScrollDepths = new Set<number>();
     const trackedTimeIntervals = new Set<number>();
-    let startTime = Date.now();
+    const startTime = Date.now();
     
     // Scroll depth tracking
     const handleScroll = () => {
