@@ -49,6 +49,7 @@ export default function RootLayout({
     <html lang="es">
       <head>
         {/* Preload critical fonts for better LCP performance */}
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="preload"
           href="https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.woff2"
@@ -63,6 +64,19 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
+        
+        {/* Preload first hero image for faster LCP */}
+        <link
+          rel="preload"
+          href="/images/medium/Arte-celestial-en-unas-elegantes.webp"
+          as="image"
+          type="image/webp"
+        />
+        
+        {/* DNS prefetch for external resources */}
+        <link rel="dns-prefetch" href="//www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+        <link rel="dns-prefetch" href="//wa.me" />
         
         {/* Google Ads Conversion Tracking - AW-17469563871 */}
         <Script

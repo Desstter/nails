@@ -133,7 +133,7 @@ export default function Services() {
     }
     
     scrollToSlide(nextIndex);
-  }, [currentSlide, services.length, scrollToSlide, services]);
+  }, [currentSlide, scrollToSlide, services]);
 
   const prevSlide = useCallback(() => {
     const prevIndex = currentSlide > 0 ? currentSlide - 1 : services.length - 1;
@@ -144,7 +144,7 @@ export default function Services() {
     }
     
     scrollToSlide(prevIndex);
-  }, [currentSlide, services.length, scrollToSlide, services]);
+  }, [currentSlide, scrollToSlide, services]);
 
   useEffect(() => {
     const carousel = carouselRef.current;
