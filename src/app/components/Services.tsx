@@ -1,6 +1,26 @@
 "use client";
 import { useState, useCallback, useRef, useEffect } from 'react';
 
+/**
+ * SERVICES SECTION - Sección de servicios
+ * 
+ * Funcionalidad:
+ * - Carrusel responsivo de servicios principales
+ * - Pricing claro y transparente para conversiones
+ * - Características detalladas de cada servicio
+ * - CTAs individuales para cada servicio
+ * 
+ * Servicios principales:
+ * - Semi Permanente Premium (servicio más demandado)
+ * - Uñas Acrílicas con Molde (mayor valor)
+ * - Forrado en Acrílico (intermedio)
+ * - Pedicure Premium (servicio complementario)
+ * 
+ * Optimizado para:
+ * - Conversión de anuncios pagados
+ * - Navegación móvil (swipe gestures)
+ * - Clarity en pricing para reducir fricción
+ */
 export default function Services() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
