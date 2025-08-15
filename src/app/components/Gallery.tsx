@@ -8,8 +8,6 @@ export default function Gallery() {
   const [viewMode, setViewMode] = useState<"categories" | "gallery">("categories");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [, setExpandedItem] = useState<number | null>(null);
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
-  const [imageLoadingStates, setImageLoadingStates] = useState<Record<number, boolean>>({});
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
@@ -22,65 +20,65 @@ export default function Gallery() {
   // Gallery items - Trabajos organizados por tipo de servicio
   const galleryItems = useMemo(() => [
     // Semi-permanente Premium
-    { id: 1, category: "semi-permanente", title: null, description: null, image: "/Arte celestial en uñas elegantes.png" },
-    { id: 2, category: "semi-permanente", title: null, description: null, image: "/Manicura francesa con corazones abstractos.png" },
-    { id: 3, category: "semi-permanente", title: null, description: null, image: "/Detalles elegantes de manicura francesa.png" },
-    { id: 4, category: "semi-permanente", title: null, description: null, image: "/french-clasico.png" },
-    { id: 5, category: "semi-permanente", title: null, description: null, image: "/Manicura rosa con detalles dorados.png" },
-    { id: 6, category: "semi-permanente", title: null, description: null, image: "/Manicura francesa con mármol dorado.png" },
-    { id: 7, category: "semi-permanente", title: null, description: null, image: "/Manicura Elegante con Brillo Dorado.png" },
-    { id: 8, category: "semi-permanente", title: null, description: null, image: "/Manicura francesa con ojos de mal de ojo.png" },
-    { id: 9, category: "semi-permanente", title: null, description: null, image: "/Manicure elegante con detalles dorados.png" },
-    { id: 10, category: "semi-permanente", title: null, description: null, image: "/Detalles delicados de uñas con brillo.png" },
+    { id: 1, category: "semi-permanente", title: null, description: null, image: "/images/medium/Arte-celestial-en-unas-elegantes.webp" },
+    { id: 2, category: "semi-permanente", title: null, description: null, image: "/images/medium/Manicura-francesa-con-corazones-abstractos.webp" },
+    { id: 3, category: "semi-permanente", title: null, description: null, image: "/images/medium/Detalles-elegantes-de-manicura-francesa.webp" },
+    { id: 4, category: "semi-permanente", title: null, description: null, image: "/images/medium/french-clasico.webp" },
+    { id: 5, category: "semi-permanente", title: null, description: null, image: "/images/medium/Manicura-rosa-con-detalles-dorados.webp" },
+    { id: 6, category: "semi-permanente", title: null, description: null, image: "/images/medium/Manicura-francesa-con-marmol-dorado.webp" },
+    { id: 7, category: "semi-permanente", title: null, description: null, image: "/images/medium/Manicura-Elegante-con-Brillo-Dorado.webp" },
+    { id: 8, category: "semi-permanente", title: null, description: null, image: "/images/medium/Manicura-francesa-con-ojos-de-mal-de-ojo.webp" },
+    { id: 9, category: "semi-permanente", title: null, description: null, image: "/images/medium/Manicure-elegante-con-detalles-dorados.webp" },
+    { id: 10, category: "semi-permanente", title: null, description: null, image: "/images/medium/Detalles-delicados-de-unas-con-brillo.webp" },
     
     // Uñas Acrílicas con Molde
-    { id: 12, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas elegante y detallado.png" },
-    { id: 15, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas moderno y detallado.png" },
-    { id: 16, category: "acrilicas-molde", title: null, description: null, image: "/Diseño de uñas acrílicas coloridas.png" },
-    { id: 17, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas con detalles dorados.png" },
-    { id: 18, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas con detalles dorados (1).png" },
-    { id: 19, category: "acrilicas-molde", title: null, description: null, image: "/Arte en uñas con tips verde neón.png" },
-    { id: 20, category: "acrilicas-molde", title: null, description: null, image: "/Diseño minimalista en uñas acrílicas.png" },
-    { id: 21, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas detallado y vibrante.png" },
-    { id: 22, category: "acrilicas-molde", title: null, description: null, image: "/Arte en uñas con detalles geométricos.png" },
+    { id: 12, category: "acrilicas-molde", title: null, description: null, image: "/images/medium/Arte-de-unas-elegante-y-detallado.webp" },
+    { id: 15, category: "acrilicas-molde", title: null, description: null, image: "/images/medium/Arte-de-unas-moderno-y-detallado.webp" },
+    { id: 16, category: "acrilicas-molde", title: null, description: null, image: "/images/medium/Diseno-de-unas-acrilicas-coloridas.webp" },
+    { id: 17, category: "acrilicas-molde", title: null, description: null, image: "/images/medium/Arte-de-unas-con-detalles-dorados.webp" },
+    { id: 18, category: "acrilicas-molde", title: null, description: null, image: "/images/medium/Arte-de-unas-con-detalles-dorados-1.webp" },
+    { id: 19, category: "acrilicas-molde", title: null, description: null, image: "/images/medium/Arte-en-unas-con-tips-verde-neon.webp" },
+    { id: 20, category: "acrilicas-molde", title: null, description: null, image: "/images/medium/Diseno-minimalista-en-unas-acrilicas.webp" },
+    { id: 21, category: "acrilicas-molde", title: null, description: null, image: "/images/medium/Arte-de-unas-detallado-y-vibrante.webp" },
+    { id: 22, category: "acrilicas-molde", title: null, description: null, image: "/images/medium/Arte-en-unas-con-detalles-geometricos.webp" },
     
     // Forrado en Acrílico
-    { id: 23, category: "forrado-acrilico", title: null, description: null, image: "/gel-dorado.png" },
-    { id: 24, category: "forrado-acrilico", title: null, description: null, image: "/Diseño de uñas con detalles dorados.png" },
-    { id: 25, category: "forrado-acrilico", title: null, description: null, image: "/Manicura elegante con detalles dorados.png" },
-    { id: 26, category: "forrado-acrilico", title: null, description: null, image: "/Manicura Elegante con Detalles Dorados (1).png" },
-    { id: 27, category: "forrado-acrilico", title: null, description: null, image: "/Diseño de uñas con detalles naturales.png" },
-    { id: 28, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con diseño botánico y geométrico.png" },
-    { id: 29, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con detalles botánicos.png" },
-    { id: 30, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con flores y detalles.png" },
-    { id: 31, category: "forrado-acrilico", title: null, description: null, image: "/Diseño geométrico y esmalte rosado.png" },
-    { id: 32, category: "forrado-acrilico", title: null, description: null, image: "/Arte en uñas con diseño geométrico.png" },
-    { id: 33, category: "forrado-acrilico", title: null, description: null, image: "/Arte de uñas con detalles gráficos.png" },
+    { id: 23, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/gel-dorado.webp" },
+    { id: 24, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/Diseno-de-unas-con-detalles-dorados.webp" },
+    { id: 25, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/Manicura-elegante-con-detalles-dorados.webp" },
+    { id: 26, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/Manicura-Elegante-con-Detalles-Dorados-1.webp" },
+    { id: 27, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/Diseno-de-unas-con-detalles-naturales.webp" },
+    { id: 28, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/Arte-de-unas-con-diseno-botanico-y-geometrico.webp" },
+    { id: 29, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/Arte-de-unas-con-detalles-botanicos.webp" },
+    { id: 30, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/Arte-de-unas-con-flores-y-detalles.webp" },
+    { id: 31, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/Diseno-geometrico-y-esmalte-rosado.webp" },
+    { id: 32, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/Arte-en-unas-con-diseno-geometrico.webp" },
+    { id: 33, category: "forrado-acrilico", title: null, description: null, image: "/images/medium/Arte-de-unas-con-detalles-graficos.webp" },
     
     // Uñas Acrílicas con Tips
-    { id: 34, category: "acrilicas-tips", title: null, description: null, image: "/Arte de Uñas Colorido y Geométrico.png" },
-    { id: 35, category: "acrilicas-tips", title: null, description: null, image: "/Arte de uñas colorido y alegre.png" },
-    { id: 36, category: "acrilicas-tips", title: null, description: null, image: "/Arte de uñas colorido y moderno.png" },
-    { id: 37, category: "acrilicas-tips", title: null, description: null, image: "/Arte en Uñas con Toque Pop.png" },
-    { id: 38, category: "acrilicas-tips", title: null, description: null, image: "/Uñas de arte pop y diseño.png" },
-    { id: 39, category: "acrilicas-tips", title: null, description: null, image: "/Uñas de leopardo en tonos vibrantes.png" },
-    { id: 40, category: "acrilicas-tips", title: null, description: null, image: "/Uñas pastel con diseño y logo.png" },
-    { id: 41, category: "acrilicas-tips", title: null, description: null, image: "/Arte de Uñas con Atardecer Tropical.png" },
-    { id: 42, category: "acrilicas-tips", title: null, description: null, image: "/Arte de uñas vibrante y moderno.png" },
-    { id: 43, category: "acrilicas-tips", title: null, description: null, image: "/Arte de uñas con Ojos Turcos.png" },
-    { id: 44, category: "acrilicas-tips", title: null, description: null, image: "/Diseño de uñas rojo y blanco.png" },
+    { id: 34, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Arte-de-Unas-Colorido-y-Geometrico.webp" },
+    { id: 35, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Arte-de-unas-colorido-y-alegre.webp" },
+    { id: 36, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Arte-de-unas-colorido-y-moderno.webp" },
+    { id: 37, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Arte-en-Unas-con-Toque-Pop.webp" },
+    { id: 38, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Unas-de-arte-pop-y-diseno.webp" },
+    { id: 39, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Unas-de-leopardo-en-tonos-vibrantes.webp" },
+    { id: 40, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Unas-pastel-con-diseno-y-logo.webp" },
+    { id: 41, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Arte-de-Unas-con-Atardecer-Tropical.webp" },
+    { id: 42, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Arte-de-unas-vibrante-y-moderno.webp" },
+    { id: 43, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Arte-de-unas-con-Ojos-Turcos.webp" },
+    { id: 44, category: "acrilicas-tips", title: null, description: null, image: "/images/medium/Diseno-de-unas-rojo-y-blanco.webp" },
     
     // Eventos Especiales
-    { id: 45, category: "eventos-especiales", title: null, description: null, image: "/Arte de Uñas Navideñas Elegante.png" },
-    { id: 46, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas navideño con Santa.png" },
-    { id: 47, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas para Halloween.png" },
-    { id: 48, category: "eventos-especiales", title: null, description: null, image: "/Uñas con arte de copos de nieve.png" },
-    { id: 49, category: "eventos-especiales", title: null, description: null, image: "/Manicura rosa con copos de nieve.png" },
-    { id: 50, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas con mariposas y amor.png" },
-    { id: 51, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas con mariposas y frase.png" },
-    { id: 52, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas con mariposas y glitter.png" },
-    { id: 53, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas con mensaje _LOVE_.png" },
-    { id: 55, category: "eventos-especiales", title: null, description: null, image: "/nails.png" }
+    { id: 45, category: "eventos-especiales", title: null, description: null, image: "/images/medium/Arte-de-Unas-Navidenas-Elegante.webp" },
+    { id: 46, category: "eventos-especiales", title: null, description: null, image: "/images/medium/Arte-de-unas-navideno-con-Santa.webp" },
+    { id: 47, category: "eventos-especiales", title: null, description: null, image: "/images/medium/Arte-de-unas-para-Halloween.webp" },
+    { id: 48, category: "eventos-especiales", title: null, description: null, image: "/images/medium/Unas-con-arte-de-copos-de-nieve.webp" },
+    { id: 49, category: "eventos-especiales", title: null, description: null, image: "/images/medium/Manicura-rosa-con-copos-de-nieve.webp" },
+    { id: 50, category: "eventos-especiales", title: null, description: null, image: "/images/medium/Arte-de-unas-con-mariposas-y-amor.webp" },
+    { id: 51, category: "eventos-especiales", title: null, description: null, image: "/images/medium/Arte-de-unas-con-mariposas-y-frase.webp" },
+    { id: 52, category: "eventos-especiales", title: null, description: null, image: "/images/medium/Arte-de-unas-con-mariposas-y-glitter.webp" },
+    { id: 53, category: "eventos-especiales", title: null, description: null, image: "/images/medium/Arte-de-unas-con-mensaje-_LOVE_.webp" },
+    { id: 55, category: "eventos-especiales", title: null, description: null, image: "/images/medium/nails.webp" }
   ], []);
 
   // Efecto para manejar el cambio de categoría con animación
@@ -227,14 +225,6 @@ export default function Gallery() {
     document.body.style.overflow = 'unset'; // Restaurar scroll del body
   };
 
-  const handleImageLoad = (itemId: number) => {
-    setLoadedImages(prev => new Set([...prev, itemId]));
-    setImageLoadingStates(prev => ({ ...prev, [itemId]: false }));
-  };
-
-  const handleImageLoadStart = (itemId: number) => {
-    setImageLoadingStates(prev => ({ ...prev, [itemId]: true }));
-  };
 
   // Categorías principales para vista inicial (sin "todos")
   const categories = [
@@ -243,7 +233,7 @@ export default function Gallery() {
       name: "Semi-permanente Premium", 
       count: 11,
       description: "Duración de 2-3 semanas con acabado impecable",
-      image: "/Manicura elegante con detalles dorados.png",
+      image: "/images/medium/Manicura-elegante-con-detalles-dorados.webp",
       gradient: "from-pink-400 to-rose-500"
     },
     { 
@@ -251,7 +241,7 @@ export default function Gallery() {
       name: "Uñas Acrílicas con Molde", 
       count: 11,
       description: "Extensión natural con diferentes formas",
-      image: "/Arte de uñas moderno y detallado.png",
+      image: "/images/medium/Arte-de-unas-moderno-y-detallado.webp",
       gradient: "from-purple-400 to-pink-500"
     },
     { 
@@ -259,7 +249,7 @@ export default function Gallery() {
       name: "Forrado en Acrílico", 
       count: 11,
       description: "Refuerzo y reparación de uñas naturales",
-      image: "/gel-dorado.png",
+      image: "/images/medium/gel-dorado.webp",
       gradient: "from-yellow-400 to-orange-500"
     },
     { 
@@ -267,7 +257,7 @@ export default function Gallery() {
       name: "Uñas Acrílicas con Tips", 
       count: 11,
       description: "Extensión con tips decorativas y naturales",
-      image: "/Arte de Uñas Colorido y Geométrico.png",
+      image: "/images/medium/Arte-de-Unas-Colorido-y-Geometrico.webp",
       gradient: "from-blue-400 to-purple-500"
     },
     { 
@@ -275,7 +265,7 @@ export default function Gallery() {
       name: "Eventos Especiales", 
       count: 11,
       description: "Diseños únicos para ocasiones especiales",
-      image: "/Arte de Uñas Navideñas Elegante.png",
+      image: "/images/medium/Arte-de-Unas-Navidenas-Elegante.webp",
       gradient: "from-emerald-400 to-teal-500"
     }
   ];
@@ -570,7 +560,7 @@ export default function Gallery() {
               <div className="relative aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden mb-3 shadow-soft">
                 {/* Imagen ANTES */}
                 <Image 
-                  src="/optimized/mano-descansando-sobre-toalla-blanca.webp" 
+                  src="/images/medium/Mano-descansando-sobre-toalla-blanca.webp" 
                   alt="Uñas antes del tratamiento"
                   fill
                   className="object-cover"
@@ -612,7 +602,7 @@ export default function Gallery() {
               <div className="relative aspect-[4/3] bg-gradient-to-br from-yellow-100 to-pink-100 rounded-2xl overflow-hidden mb-3 shadow-soft">
                 {/* Placeholder para imagen DESPUÉS */}
                 <Image 
-                  src="/optimized/diseño-minimalista-en-uñas-acrílicas.webp" 
+                  src="/images/medium/Diseno-minimalista-en-unas-acrilicas.webp" 
                   alt="Uñas después del tratamiento"
                   fill
                   className="object-cover"
@@ -644,7 +634,7 @@ export default function Gallery() {
             <div className="text-center">
               <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-4 shadow-soft">
                 <Image 
-                  src="/optimized/mano-descansando-sobre-toalla-blanca.webp" 
+                  src="/images/medium/Mano-descansando-sobre-toalla-blanca.webp" 
                   alt="Uñas antes del tratamiento"
                   fill
                   className="object-cover"
@@ -684,7 +674,7 @@ export default function Gallery() {
             <div className="text-center">
               <div className="relative aspect-square bg-gradient-to-br from-yellow-100 to-pink-100 rounded-2xl overflow-hidden mb-4 shadow-soft">
                 <Image 
-                  src="/optimized/diseño-minimalista-en-uñas-acrílicas.webp" 
+                  src="/images/medium/Diseno-minimalista-en-unas-acrilicas.webp" 
                   alt="Uñas después del tratamiento"
                   fill
                   className="object-cover"

@@ -64,15 +64,9 @@ export default function OptimizedImage({
   onClick,
   context = 'general'
 }: OptimizedImageProps) {
-  const [hasError, setHasError] = useState(false);
-
   // Determinar calidad y sizes por contexto si no se especifican
   const finalQuality = quality || QUALITY_BY_CONTEXT[context];
   const finalSizes = sizes || SIZES_BY_CONTEXT[context];
-
-  const handleError = () => {
-    setHasError(true);
-  };
 
   const imageProps = {
     src,
@@ -81,7 +75,6 @@ export default function OptimizedImage({
     priority,
     quality: finalQuality,
     sizes: finalSizes,
-    onError: handleError,
     onClick
   };
 
