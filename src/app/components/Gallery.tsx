@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-// import Image from "next/image";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import Image from "next/image";
 
 export default function Gallery() {
   const [viewMode, setViewMode] = useState<"categories" | "gallery">("categories");
@@ -15,7 +15,7 @@ export default function Gallery() {
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
   // Gallery items - Trabajos organizados por tipo de servicio
-  const galleryItems = [
+  const galleryItems = useMemo(() => [
     // Semi-permanente Premium
     { id: 1, category: "semi-permanente", title: null, description: null, image: "/Arte celestial en uñas elegantes.png" },
     { id: 2, category: "semi-permanente", title: null, description: null, image: "/Manicura francesa con corazones abstractos.png" },
@@ -80,7 +80,7 @@ export default function Gallery() {
     { id: 53, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas con mensaje _LOVE_.png" },
     { id: 54, category: "eventos-especiales", title: null, description: null, image: "/Mano descansando sobre toalla blanca.png" },
     { id: 55, category: "eventos-especiales", title: null, description: null, image: "/nails.png" }
-  ];
+  ], []);
 
   // Efecto para manejar el cambio de categoría con animación
   useEffect(() => {
@@ -101,6 +101,25 @@ export default function Gallery() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isDropdownOpen]);
+
+  // Función para navegar imágenes en el lightbox
+  const navigateImage = useCallback((direction: 'prev' | 'next') => {
+    const currentFilteredItems = selectedCategory 
+      ? galleryItems.filter(item => item.category === selectedCategory)
+      : [];
+    const imagesWithSrc = currentFilteredItems.filter(item => item.image);
+    const totalImages = imagesWithSrc.length;
+    
+    if (direction === 'next') {
+      const nextIndex = (currentImageIndex + 1) % totalImages;
+      setCurrentImageIndex(nextIndex);
+      setExpandedImage(imagesWithSrc[nextIndex].image);
+    } else {
+      const prevIndex = currentImageIndex === 0 ? totalImages - 1 : currentImageIndex - 1;
+      setCurrentImageIndex(prevIndex);
+      setExpandedImage(imagesWithSrc[prevIndex].image);
+    }
+  }, [selectedCategory, currentImageIndex, galleryItems]);
 
   // Efecto para manejar tecla ESC, navegación y gestos táctiles
   useEffect(() => {
@@ -157,7 +176,7 @@ export default function Gallery() {
       document.removeEventListener('touchend', handleTouchEnd);
       document.body.style.overflow = 'unset';
     };
-  }, [isLightboxOpen, currentImageIndex]);
+  }, [isLightboxOpen, currentImageIndex, navigateImage]);
 
   // Función para navegar a una categoría con transición
   const navigateToCategory = (categoryId: string) => {
@@ -194,24 +213,6 @@ export default function Gallery() {
     setExpandedImage(null);
     document.body.style.overflow = 'unset'; // Restaurar scroll del body
   };
-
-  const navigateImage = useCallback((direction: 'prev' | 'next') => {
-    const currentFilteredItems = selectedCategory 
-      ? galleryItems.filter(item => item.category === selectedCategory)
-      : [];
-    const imagesWithSrc = currentFilteredItems.filter(item => item.image);
-    const totalImages = imagesWithSrc.length;
-    
-    if (direction === 'next') {
-      const nextIndex = (currentImageIndex + 1) % totalImages;
-      setCurrentImageIndex(nextIndex);
-      setExpandedImage(imagesWithSrc[nextIndex].image);
-    } else {
-      const prevIndex = currentImageIndex === 0 ? totalImages - 1 : currentImageIndex - 1;
-      setCurrentImageIndex(prevIndex);
-      setExpandedImage(imagesWithSrc[prevIndex].image);
-    }
-  }, [selectedCategory, currentImageIndex, galleryItems]);
 
   const handleImageLoad = (itemId: number) => {
     setLoadedImages(prev => new Set([...prev, itemId]));
@@ -402,11 +403,12 @@ export default function Gallery() {
                 {/* Imagen de fondo */}
                 <div className="aspect-[4/5] bg-gradient-to-br from-pink-100 to-yellow-100 overflow-hidden relative">
                   <div className="relative w-full h-full">
-                    <img 
+                    <Image 
                       src={category.image} 
                       alt={category.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      loading="lazy"
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 20vw"
                     />
                     {/* Overlay con gradiente */}
                     <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient} opacity-60 category-card-gradient`}></div>
@@ -475,13 +477,14 @@ export default function Gallery() {
                           {imageLoadingStates[item.id] && (
                             <div className="absolute inset-0 image-loading z-10"></div>
                           )}
-                          <img 
+                          <Image 
                             src={item.image} 
                             alt={`Trabajo de uñas ${item.category}`}
-                            className={`w-full h-full object-cover group-hover:scale-110 transition-all duration-500 progressive-image ${
+                            fill
+                            className={`object-cover group-hover:scale-110 transition-all duration-500 progressive-image ${
                               loadedImages.has(item.id) ? 'loaded' : 'loading'
                             }`}
-                            loading="lazy"
+                            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                             onLoadStart={() => handleImageLoadStart(item.id)}
                             onLoad={() => handleImageLoad(item.id)}
                             onError={() => setImageLoadingStates(prev => ({ ...prev, [item.id]: false }))}
@@ -534,10 +537,12 @@ export default function Gallery() {
             <div className="text-center">
               <div className="relative aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden mb-3 shadow-soft">
                 {/* Imagen ANTES */}
-                <img 
+                <Image 
                   src="/optimized/mano-descansando-sobre-toalla-blanca.webp" 
                   alt="Uñas antes del tratamiento"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-dashed border-gray-300" style={{ display: 'none' }}>
                   <div className="text-gray-500 text-center">
@@ -574,10 +579,12 @@ export default function Gallery() {
             <div className="text-center">
               <div className="relative aspect-[4/3] bg-gradient-to-br from-yellow-100 to-pink-100 rounded-2xl overflow-hidden mb-3 shadow-soft">
                 {/* Placeholder para imagen DESPUÉS */}
-                <img 
+                <Image 
                   src="/optimized/diseño-minimalista-en-uñas-acrílicas.webp" 
                   alt="Uñas después del tratamiento"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-pink-100 flex items-center justify-center border-2 border-dashed border-yellow-300" style={{ display: 'none' }}>
                   <div className="text-yellow-600 text-center">
@@ -604,10 +611,12 @@ export default function Gallery() {
             {/* Antes - Desktop */}
             <div className="text-center">
               <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-4 shadow-soft">
-                <img 
+                <Image 
                   src="/optimized/mano-descansando-sobre-toalla-blanca.webp" 
                   alt="Uñas antes del tratamiento"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center border-2 border-dashed border-gray-300" style={{ display: 'none' }}>
                   <div className="text-gray-500 text-center">
@@ -642,10 +651,12 @@ export default function Gallery() {
             {/* Después - Desktop */}
             <div className="text-center">
               <div className="relative aspect-square bg-gradient-to-br from-yellow-100 to-pink-100 rounded-2xl overflow-hidden mb-4 shadow-soft">
-                <img 
+                <Image 
                   src="/optimized/diseño-minimalista-en-uñas-acrílicas.webp" 
                   alt="Uñas después del tratamiento"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-pink-100 flex items-center justify-center border-2 border-dashed border-yellow-300" style={{ display: 'none' }}>
                   <div className="text-yellow-600 text-center">
@@ -740,13 +751,16 @@ export default function Gallery() {
 
             {/* Imagen expandida */}
             <div className="relative max-w-full max-h-full">
-              <img
+              <Image
                 src={expandedImage}
                 alt={`Trabajo de uñas ${selectedCategory}`}
+                width={800}
+                height={600}
                 className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl lightbox-image lightbox-image-transition"
                 style={{
                   animation: 'lightboxImageEnter 0.4s ease-out'
                 }}
+                sizes="90vw"
               />
               
               {/* Indicador de posición */}
