@@ -2,15 +2,6 @@
 
 import { useEffect } from 'react';
 
-declare global {
-  interface Window {
-    trackScrollDepth: (percentage: number) => void;
-    trackTimeOnPage: (seconds: number) => void;
-    trackGalleryInteraction: (action: string, category: string) => void;
-    trackCarouselInteraction: (action: string, service: string) => void;
-  }
-}
-
 export default function AnalyticsTracker() {
   useEffect(() => {
     const trackedScrollDepths = new Set<number>();
@@ -30,7 +21,7 @@ export default function AnalyticsTracker() {
       milestones.forEach(milestone => {
         if (scrollPercentage >= milestone && !trackedScrollDepths.has(milestone)) {
           trackedScrollDepths.add(milestone);
-          window.trackScrollDepth(milestone);
+          window.trackScrollDepth?.(milestone);
         }
       });
     };
@@ -47,7 +38,7 @@ export default function AnalyticsTracker() {
       intervals.forEach(interval => {
         if (secondsOnPage >= interval && !trackedTimeIntervals.has(interval)) {
           trackedTimeIntervals.add(interval);
-          window.trackTimeOnPage(interval);
+          window.trackTimeOnPage?.(interval);
         }
       });
     };
