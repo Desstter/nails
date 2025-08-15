@@ -99,13 +99,13 @@ export default function OptimizedImage({
   const cleanName = cleanImageName(src);
   const baseOptimizedPath = `/optimized/${cleanName}`;
   
-  const imageSources = isOptimizedPath ? [src] : [
-    `${baseOptimizedPath}.avif`,
-    `${baseOptimizedPath}.webp`,
-    src // Fallback original
-  ];
-
   useEffect(() => {
+    const imageSources = isOptimizedPath ? [src] : [
+      `${baseOptimizedPath}.avif`,
+      `${baseOptimizedPath}.webp`,
+      src // Fallback original
+    ];
+
     if (isOptimizedPath) {
       setCurrentSrc(src);
       return;
@@ -137,7 +137,7 @@ export default function OptimizedImage({
     }
 
     findBestFormat();
-  }, [src, imageSources, isOptimizedPath]);
+  }, [src, baseOptimizedPath, isOptimizedPath]);
 
   const handleLoad = () => {
     setIsLoading(false);
