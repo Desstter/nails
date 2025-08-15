@@ -177,8 +177,31 @@ nav h1.text-luxury-xl {
    MOBILE OPTIMIZATIONS - Optimizaciones para móviles (Google Ads target)
    ============================================================================= */
 
-/* Targets táctiles mínimos para móviles */
+/* Targets táctiles mínimos para móviles - Actualizado */
 .btn-touch {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* Asegurar touch targets en botones de navegación */
+.nav-tab, .back-button, .category-selector {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+/* Dropdown options touch friendly */
+.dropdown-option {
+  min-height: 48px;
+  padding: 12px 16px;
+}
+
+/* Gallery card touch optimization */
+.gallery-card-mobile {
+  min-height: 48px;
+}
+
+/* Lightbox buttons touch friendly */
+.lightbox-btn {
   min-height: 48px;
   min-width: 48px;
 }
@@ -283,6 +306,37 @@ nav h1.text-luxury-xl {
   
   .carousel-scroller {
     touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Carousel optimizations for smooth swipe */
+  .mobile-optimized {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .mobile-optimized > * {
+    scroll-snap-align: center;
+  }
+  
+  /* Carousel navigation buttons */
+  .carousel-nav-btn {
+    min-height: 48px;
+    min-width: 48px;
+    touch-action: manipulation;
+  }
+  
+  /* Carousel dots with better touch targets */
+  .carousel-dot {
+    min-height: 24px;
+    min-width: 24px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: all 0.3s ease;
+  }
+  
+  .carousel-dot.active {
+    transform: scale(1.2);
   }
 
   /* Feedback táctil para tarjetas */
@@ -304,10 +358,10 @@ nav h1.text-luxury-xl {
 }
 
 /* =============================================================================
-   ANIMATIONS & LOADING - Animaciones y estados de carga
+   ANIMATIONS & UTILITIES - Animaciones básicas y utilidades
    ============================================================================= */
 
-/* Animaciones para entrada de elementos */
+/* Animaciones esenciales */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -316,33 +370,6 @@ nav h1.text-luxury-xl {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Animación de carga (skeleton loading) */
-.image-loading {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
   }
 }
 

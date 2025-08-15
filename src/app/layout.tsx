@@ -7,12 +7,16 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
   display: "swap",
+  preload: true,
+  fallback: ["Georgia", "serif"],
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
+  preload: true,
+  fallback: ["system-ui", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -43,6 +47,22 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
+        {/* Preload critical fonts for better LCP performance */}
+        <link
+          rel="preload"
+          href="https://fonts.gstatic.com/s/playfairdisplay/v30/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQZNLo_U2r.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        
         {/* Google Ads Conversion Tracking - AW-17469563871 */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-17469563871"
@@ -72,6 +92,46 @@ export default function RootLayout({
                 'send_to': 'AW-17469563871',
                 'event_category': 'service',
                 'event_label': serviceName
+              });
+            };
+            
+            // Tracking de scroll depth
+            window.trackScrollDepth = function(percentage) {
+              gtag('event', 'scroll', {
+                'send_to': 'AW-17469563871',
+                'event_category': 'engagement',
+                'event_label': 'scroll_' + percentage + '_percent',
+                'value': percentage
+              });
+            };
+            
+            // Tracking de tiempo en página
+            window.trackTimeOnPage = function(seconds) {
+              gtag('event', 'timing_complete', {
+                'send_to': 'AW-17469563871',
+                'event_category': 'engagement',
+                'event_label': 'time_on_page_' + seconds + 's',
+                'value': seconds
+              });
+            };
+            
+            // Tracking de interacciones con galería
+            window.trackGalleryInteraction = function(action, category) {
+              gtag('event', 'select_content', {
+                'send_to': 'AW-17469563871',
+                'event_category': 'gallery',
+                'event_label': action + '_' + category,
+                'content_type': 'gallery'
+              });
+            };
+            
+            // Tracking de engagement con carrusel
+            window.trackCarouselInteraction = function(action, service) {
+              gtag('event', 'select_content', {
+                'send_to': 'AW-17469563871',
+                'event_category': 'carousel',
+                'event_label': action + '_' + service,
+                'content_type': 'service_carousel'
               });
             };
           `}
