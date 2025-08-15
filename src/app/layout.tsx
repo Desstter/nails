@@ -49,6 +49,7 @@ export default function RootLayout({
     <html lang="es">
       <head>
         {/* Preload critical fonts for better LCP performance */}
+        {/* Note: Google Fonts preconnect is handled automatically by Next.js font optimization */}
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="preload"
