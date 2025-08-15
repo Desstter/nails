@@ -97,6 +97,11 @@ export default function Services() {
   ];
 
   const handleBookService = (serviceName: string) => {
+    // Track service booking intent
+    if (typeof window !== 'undefined' && window.trackServiceView) {
+      window.trackServiceView(serviceName);
+    }
+    
     const message = encodeURIComponent(
       `Hola! Me interesa agendar el servicio "${serviceName}". ¿Podrían darme más información sobre disponibilidad y confirmar el precio?`
     );
@@ -121,11 +126,23 @@ export default function Services() {
 
   const nextSlide = useCallback(() => {
     const nextIndex = currentSlide < services.length - 1 ? currentSlide + 1 : 0;
+    
+    // Track carousel interaction
+    if (typeof window !== 'undefined' && window.trackCarouselInteraction) {
+      window.trackCarouselInteraction('next_slide', services[nextIndex].name);
+    }
+    
     scrollToSlide(nextIndex);
   }, [currentSlide, services.length, scrollToSlide]);
 
   const prevSlide = useCallback(() => {
     const prevIndex = currentSlide > 0 ? currentSlide - 1 : services.length - 1;
+    
+    // Track carousel interaction
+    if (typeof window !== 'undefined' && window.trackCarouselInteraction) {
+      window.trackCarouselInteraction('prev_slide', services[prevIndex].name);
+    }
+    
     scrollToSlide(prevIndex);
   }, [currentSlide, services.length, scrollToSlide]);
 

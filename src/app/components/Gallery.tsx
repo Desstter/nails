@@ -185,6 +185,11 @@ export default function Gallery() {
   const navigateToCategory = (categoryId: string) => {
     if (selectedCategory === categoryId) return; // Si ya está seleccionada, no hacer nada
     
+    // Track gallery interaction
+    if (typeof window !== 'undefined' && window.trackGalleryInteraction) {
+      window.trackGalleryInteraction('category_select', categoryId);
+    }
+    
     setExpandedItem(null); // Cerrar cualquier item expandido
     setSelectedCategory(categoryId);
     setViewMode("gallery");
@@ -205,6 +210,11 @@ export default function Gallery() {
 
   // Funciones para el lightbox
   const openLightbox = (imageSrc: string, imageIndex: number) => {
+    // Track gallery image view
+    if (typeof window !== 'undefined' && window.trackGalleryInteraction) {
+      window.trackGalleryInteraction('image_view', selectedCategory || 'unknown');
+    }
+    
     setExpandedImage(imageSrc);
     setCurrentImageIndex(imageIndex);
     setIsLightboxOpen(true);
