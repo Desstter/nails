@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 
 /**
  * SERVICES SECTION - Sección de servicios
@@ -24,7 +24,9 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 export default function Services() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
-  const services = [
+  
+  // Memoize services array to prevent unnecessary re-renders
+  const services = useMemo(() => [
     {
       id: "semi-permanent",
       name: "✨ Semi Permanente Premium",
@@ -94,7 +96,7 @@ export default function Services() {
       popular: false,
       specialty: false
     }
-  ];
+  ], []); // Empty dependency array since services are static
 
   const handleBookService = (serviceName: string) => {
     // Track service booking intent
