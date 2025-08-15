@@ -43,28 +43,28 @@ export default function FastBooking() {
       id: "semi-permanent",
       name: "✨ Semi Permanente Premium",
       duration: 75,
-      price: "COP $60.000",
+      price: "COP $50.000",
       description: "Técnica avanzada con acabado profesional de hasta 4 semanas. Ideal para manos impecables y brillantes por más tiempo."
     },
     {
       id: "acrylic-mold",
       name: "💅 Uñas Acrílicas con Molde",
       duration: 120,
-      price: "COP $100.000",
+      price: "COP $90.000",
       description: "Diseño estructural personalizado para mayor resistencia y elegancia."
     },
     {
       id: "acrylic-coating",
       name: "💖 Forrado en Acrílico",
       duration: 90,
-      price: "COP $85.000",
+      price: "COP $75.000",
       description: "Refuerzo ideal para uñas naturales, más fuertes y duraderas sin perder la naturalidad."
     },
     {
       id: "acrylic-tips",
       name: "🌟 Uñas Acrílicas con Tips",
       duration: 100,
-      price: "COP $80.000",
+      price: "COP $70.000",
       description: "Extensiones rápidas y perfectas para lucir uñas largas y estilizadas."
     }
   ];
@@ -142,12 +142,18 @@ export default function FastBooking() {
       day: 'numeric' 
     });
 
+    const originalPrice = service?.id === "semi-permanent" ? "COP $60.000" :
+                         service?.id === "acrylic-mold" ? "COP $100.000" :
+                         service?.id === "acrylic-coating" ? "COP $85.000" : "COP $80.000";
+
     return encodeURIComponent(
-      `🗓️ NUEVA CITA AGENDADA\n\n` +
+      `🗓️ NUEVA CITA AGENDADA - FORMULARIO WEB\n\n` +
       `👩‍💼 Cliente: ${clientName}\n` +
       `📱 Teléfono: ${clientPhone}\n\n` +
       `💅 Servicio: ${service?.name}\n` +
-      `💰 Precio: ${service?.price}\n` +
+      `💰 Precio original: ${originalPrice}\n` +
+      `🎉 Descuento primera vez: -$10.000\n` +
+      `💚 Precio final: ${service?.price}\n` +
       `⏰ Duración: ${service?.duration} minutos\n\n` +
       `📅 Fecha: ${formattedDate}\n` +
       `🕐 Hora: ${time} - ${endTime}\n\n` +
@@ -155,7 +161,7 @@ export default function FastBooking() {
       `Barrio: ${neighborhood}\n` +
       `Dirección: ${address}\n\n` +
       `✅ Confirma disponibilidad por favor.\n` +
-      `💳 Pago al finalizar: ${service?.price}`
+      `💳 Pago al finalizar: ${service?.price} (descuento ya aplicado)`
     );
   };
 
@@ -180,9 +186,23 @@ export default function FastBooking() {
           <h2 className="text-luxury-lg mb-4">
             Agenda tu Cita en <span className="gradient-gold">Menos de 1 Minuto</span>
           </h2>
-          <p className="text-premium">
+          <p className="text-premium mb-6">
             Sistema rápido y fácil. No necesitas crear cuenta ni pagar por adelantado.
           </p>
+          {/* Promoción de descuento */}
+          <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl p-6 max-w-2xl mx-auto shadow-luxury">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <span className="text-2xl">🎉</span>
+              <h3 className="text-xl font-bold">¡Oferta Especial!</h3>
+              <span className="text-2xl">🎉</span>
+            </div>
+            <p className="text-lg font-semibold mb-2">
+              Si agendas tu cita por este formulario: <span className="text-yellow-300">-$10,000 de descuento</span> en tu primera vez
+            </p>
+            <p className="text-sm opacity-90">
+              Válido solo para nuevas clientas que reserven a través de este sistema
+            </p>
+          </div>
         </div>
 
         {/* Progress Indicator */}
@@ -223,7 +243,15 @@ export default function FastBooking() {
                       <h4 className="text-xl font-semibold text-gray-800 group-hover:text-yellow-600">
                         {service.name}
                       </h4>
-                      <span className="text-2xl font-bold text-yellow-600">{service.price}</span>
+                      <div className="text-right">
+                        <div className="text-sm text-gray-500 line-through">
+                          {service.id === "semi-permanent" ? "COP $60.000" :
+                           service.id === "acrylic-mold" ? "COP $100.000" :
+                           service.id === "acrylic-coating" ? "COP $85.000" : "COP $80.000"}
+                        </div>
+                        <div className="text-2xl font-bold text-green-600">{service.price}</div>
+                        <div className="text-xs text-green-600 font-medium">¡Descuento aplicado!</div>
+                      </div>
                     </div>
                     <p className="text-gray-600 mb-4">{service.description}</p>
                     <div className="flex items-center justify-between">
@@ -467,7 +495,8 @@ export default function FastBooking() {
                     <span className="font-semibold text-green-700">Recordatorio de Pago</span>
                   </div>
                   <p className="text-green-600 text-sm">
-                    <strong>No hay pago anticipado.</strong> Pagas {bookingData.service?.price} al finalizar el servicio. 
+                    <strong>No hay pago anticipado.</strong> Pagas {bookingData.service?.price} al finalizar el servicio 
+                    (ya incluye descuento de $10.000 por primera vez). 
                     Acepto efectivo, Nequi, Bancolombia o transferencia.
                   </p>
                 </div>

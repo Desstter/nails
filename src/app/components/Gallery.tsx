@@ -297,9 +297,14 @@ export default function Gallery() {
               <h2 className="text-luxury-lg mb-6">
                 Galería de <span className="gradient-gold">Nuestro Trabajo</span>
               </h2>
-              <p className="text-premium max-w-2xl mx-auto">
+              <p className="text-premium max-w-2xl mx-auto mb-4">
                 Elige el tipo de servicio que más te interese para ver nuestros trabajos especializados.
               </p>
+              <div className="bg-gradient-to-r from-yellow-50 to-pink-50 border border-yellow-200 rounded-xl p-4 max-w-xl mx-auto">
+                <p className="text-sm text-gray-700 font-medium">
+                  ✨ <strong>Todas las fotos y estilos mostrados son de nuestra propiedad intelectual</strong> ✨
+                </p>
+              </div>
             </div>
           </div>
         </div>
