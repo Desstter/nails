@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
+import OptimizedImage from "./OptimizedImage";
 
 export default function Gallery() {
   const [viewMode, setViewMode] = useState<"categories" | "gallery">("categories");
@@ -13,6 +14,10 @@ export default function Gallery() {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  
+  // Lazy Loading: Estado para controlar cuántas imágenes mostrar
+  const [visibleImagesCount, setVisibleImagesCount] = useState(6); // Mobile-first: 6 iniciales
+  const IMAGES_PER_LOAD = 6; // Cargar de 6 en 6
 
   // Gallery items - Trabajos organizados por tipo de servicio
   const galleryItems = useMemo(() => [
@@ -81,6 +86,8 @@ export default function Gallery() {
   // Efecto para manejar el cambio de categoría con animación
   useEffect(() => {
     setExpandedItem(null);
+    // Reset lazy loading al cambiar categoría
+    setVisibleImagesCount(6);
   }, [selectedCategory]);
 
   // Efecto para cerrar dropdown al hacer clic fuera
@@ -264,9 +271,21 @@ export default function Gallery() {
   ];
 
 
-  const filteredItems = selectedCategory 
+  // Filtrar y aplicar lazy loading
+  const allFilteredItems = selectedCategory 
     ? galleryItems.filter(item => item.category === selectedCategory)
     : [];
+  
+  // Aplicar lazy loading: solo mostrar las primeras X imágenes
+  const filteredItems = allFilteredItems.slice(0, visibleImagesCount);
+  
+  // Función para cargar más imágenes
+  const loadMoreImages = () => {
+    setVisibleImagesCount(prev => Math.min(prev + IMAGES_PER_LOAD, allFilteredItems.length));
+  };
+  
+  // Verificar si hay más imágenes para cargar
+  const hasMoreImages = visibleImagesCount < allFilteredItems.length;
 
   return (
     <section id="galeria" className="bg-gradient-to-br from-gray-50 to-white">
@@ -398,17 +417,15 @@ export default function Gallery() {
               >
                 {/* Imagen de fondo */}
                 <div className="aspect-[4/5] bg-gradient-to-br from-pink-100 to-yellow-100 overflow-hidden relative">
-                  <div className="relative w-full h-full">
-                    <Image 
-                      src={category.image} 
-                      alt={category.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 20vw"
-                    />
-                    {/* Overlay con gradiente */}
-                    <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient} opacity-60 category-card-gradient`}></div>
-                  </div>
+                  <OptimizedImage
+                    src={category.image} 
+                    alt={category.name}
+                    fill
+                    context="gallery-thumb"
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  {/* Overlay con gradiente */}
+                  <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient} opacity-60 category-card-gradient`}></div>
                   
                   {/* Contenido superpuesto */}
                   <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6">
@@ -445,64 +462,73 @@ export default function Gallery() {
           <div className="container-luxury py-6">
             {/* Grid de trabajos - Sin header redundante */}
             {filteredItems.length > 0 ? (
-              <div 
-                key={selectedCategory} // Key para forzar re-render en cambio de categoría
-                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 lg:gap-4 gallery-grid-mobile gallery-transition"
-              >
-                {filteredItems.map((item, index) => (
-                  <div
-                    key={item.id}
-                    className={`group bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-luxury transition-all duration-300 hover:transform hover:scale-105 gallery-card gallery-card-mobile ${
-                      item.image ? 'cursor-pointer' : ''
-                    }`}
-                    style={{
-                      animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`
-                    }}
-                    onClick={() => {
-                      if (item.image) {
-                        const imagesWithSrc = filteredItems.filter(i => i.image);
-                        const imageIndex = imagesWithSrc.findIndex(i => i.id === item.id);
-                        openLightbox(item.image, imageIndex);
-                      }
-                    }}
-                  >
-                    {/* Imagen optimizada y compacta */}
-                    <div className="aspect-square bg-gradient-to-br from-pink-100 to-yellow-100 overflow-hidden relative">
-                      {item.image ? (
-                        <div className="relative w-full h-full">
-                          {imageLoadingStates[item.id] && (
-                            <div className="absolute inset-0 image-loading z-10"></div>
-                          )}
-                          <Image 
+              <>
+                <div 
+                  key={selectedCategory} // Key para forzar re-render en cambio de categoría
+                  className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 lg:gap-4 gallery-grid-mobile gallery-transition"
+                >
+                  {filteredItems.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className={`group bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-luxury transition-all duration-300 hover:transform hover:scale-105 gallery-card gallery-card-mobile ${
+                        item.image ? 'cursor-pointer' : ''
+                      }`}
+                      style={{
+                        animation: `fadeInUp 0.4s ease-out ${index * 0.05}s both`
+                      }}
+                      onClick={() => {
+                        if (item.image) {
+                          const imagesWithSrc = filteredItems.filter(i => i.image);
+                          const imageIndex = imagesWithSrc.findIndex(i => i.id === item.id);
+                          openLightbox(item.image, imageIndex);
+                        }
+                      }}
+                    >
+                      {/* Imagen optimizada y compacta */}
+                      <div className="aspect-square bg-gradient-to-br from-pink-100 to-yellow-100 overflow-hidden relative">
+                        {item.image ? (
+                          <OptimizedImage
                             src={item.image} 
                             alt={`Trabajo de uñas ${item.category}`}
                             fill
-                            className={`object-cover group-hover:scale-110 transition-all duration-500 progressive-image ${
-                              loadedImages.has(item.id) ? 'loaded' : 'loading'
-                            }`}
-                            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                            onLoadStart={() => handleImageLoadStart(item.id)}
-                            onLoad={() => handleImageLoad(item.id)}
-                            onError={() => setImageLoadingStates(prev => ({ ...prev, [item.id]: false }))}
+                            context="gallery-thumb"
+                            className="object-cover group-hover:scale-110 transition-all duration-500"
                           />
-                        </div>
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center border-2 border-dashed border-yellow-300">
-                          <div className="text-center p-2">
-                            <div className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-1 sm:mb-2 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center">
-                              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center border-2 border-dashed border-yellow-300">
+                            <div className="text-center p-2">
+                              <div className="w-8 h-8 sm:w-10 sm:h-10 mx-auto mb-1 sm:mb-2 bg-gradient-to-br from-yellow-400 to-pink-400 rounded-full flex items-center justify-center">
+                                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                              </div>
+                              <p className="text-xs text-yellow-600 font-medium">Próximamente</p>
                             </div>
-                            <p className="text-xs text-yellow-600 font-medium">Próximamente</p>
                           </div>
-                        </div>
-                      )}
-                      
+                        )}
+                      </div>
                     </div>
+                  ))}
+                </div>
+                
+                {/* Botón "Ver más" - Lazy Loading */}
+                {hasMoreImages && (
+                  <div className="text-center mt-8 mb-4">
+                    <button
+                      onClick={loadMoreImages}
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-6 py-3 rounded-full font-medium hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 shadow-elegant hover:shadow-luxury hover:scale-105"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Ver {Math.min(IMAGES_PER_LOAD, allFilteredItems.length - visibleImagesCount)} más
+                      <span className="text-yellow-100 text-sm">
+                        ({visibleImagesCount} de {allFilteredItems.length})
+                      </span>
+                    </button>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             ) : (
               <div className="text-center py-12">
                 <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-yellow-100 to-pink-100 rounded-full flex items-center justify-center">
@@ -745,18 +771,18 @@ export default function Gallery() {
               </button>
             )}
 
-            {/* Imagen expandida */}
+            {/* Imagen expandida - Máxima calidad para lightbox */}
             <div className="relative max-w-full max-h-full">
-              <Image
+              <OptimizedImage
                 src={expandedImage}
                 alt={`Trabajo de uñas ${selectedCategory}`}
                 width={800}
                 height={600}
+                context="gallery-full"
                 className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl lightbox-image lightbox-image-transition"
                 style={{
                   animation: 'lightboxImageEnter 0.4s ease-out'
                 }}
-                sizes="90vw"
               />
               
               {/* Indicador de posición */}

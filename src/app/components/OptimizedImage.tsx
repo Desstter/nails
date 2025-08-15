@@ -1,6 +1,21 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
+
+/**
+ * OPTIMIZED IMAGE COMPONENT - Simplificado para producción
+ * 
+ * Funcionalidad:
+ * - Usa Next.js Image optimization automática (WebP/AVIF)
+ * - Loading states y error handling
+ * - Calidades por contexto (hero, gallery, lightbox)
+ * - Lazy loading inteligente
+ * 
+ * Next.js se encarga automáticamente de:
+ * - Conversión a WebP/AVIF según soporte del navegador
+ * - Redimensionado responsive
+ * - Optimización de carga
+ */
 
 interface OptimizedImageProps {
   src: string;
@@ -15,64 +30,24 @@ interface OptimizedImageProps {
   fill?: boolean;
   style?: React.CSSProperties;
   onClick?: () => void;
+  context?: 'hero' | 'gallery-thumb' | 'gallery-full' | 'general';
 }
 
-// Mapeo de nombres de archivos originales a nombres optimizados
-const imageMapping: Record<string, string> = {
-  "Arte celestial en uñas elegantes": "arte-celestial-en-uñas-elegantes",
-  "Arte de uñas con detalles botánicos": "arte-de-uñas-con-detalles-botánicos",
-  "Arte de uñas con detalles gráficos": "arte-de-uñas-con-detalles-gráficos",
-  "Arte de uñas con diseño botánico y geométrico": "arte-de-uñas-con-diseño-botánico-y-geométrico",
-  "Arte de uñas con mariposas y amor": "arte-de-uñas-con-mariposas-y-amor",
-  "Arte de uñas con Ojos Turcos": "arte-de-uñas-con-ojos-turcos",
-  "Arte de uñas detallado y vibrante": "arte-de-uñas-detallado-y-vibrante",
-  "Arte de uñas elegante y detallado (2)": "arte-de-uñas-elegante-y-detallado-2",
-  "Arte de uñas elegante y detallado (3)": "arte-de-uñas-elegante-y-detallado-3",
-  "Arte de uñas elegante y detallado": "arte-de-uñas-elegante-y-detallado",
-  "Arte de uñas moderno y detallado": "arte-de-uñas-moderno-y-detallado",
-  "Arte de Uñas Navideñas Elegante": "arte-de-uñas-navideñas-elegante",
-  "Arte de uñas navideño con Santa": "arte-de-uñas-navideño-con-santa",
-  "Arte de uñas para Halloween": "arte-de-uñas-para-halloween",
-  "Arte de uñas vibrante y moderno": "arte-de-uñas-vibrante-y-moderno",
-  "Arte en uñas con detalles geométricos": "arte-en-uñas-con-detalles-geométricos",
-  "Arte en uñas con tips verde neón": "arte-en-uñas-con-tips-verde-neón",
-  "Arte en Uñas con Toque Pop": "arte-en-uñas-con-toque-pop",
-  "Detalles elegantes de manicura francesa": "detalles-elegantes-de-manicura-francesa",
-  "Diseño de uñas acrílicas coloridas": "diseño-de-uñas-acrílicas-coloridas",
-  "Diseño de uñas con detalles dorados": "diseño-de-uñas-con-detalles-dorados",
-  "Diseño de uñas rojo y blanco": "diseño-de-uñas-rojo-y-blanco",
-  "Diseño minimalista en uñas acrílicas": "diseño-minimalista-en-uñas-acrílicas",
-  "french-clasico": "french-clasico",
-  "gel-dorado": "gel-dorado",
-  "Manicura Elegante con Brillo Dorado": "manicura-elegante-con-brillo-dorado",
-  "Manicura elegante con detalles dorados": "manicura-elegante-con-detalles-dorados",
-  "Manicura francesa con corazones abstractos (1)": "manicura-francesa-con-corazones-abstractos-1",
-  "Manicura francesa con corazones abstractos": "manicura-francesa-con-corazones-abstractos",
-  "Manicura francesa con ojos de mal de ojo": "manicura-francesa-con-ojos-de-mal-de-ojo",
-  "Manicura rosa con copos de nieve": "manicura-rosa-con-copos-de-nieve",
-  "Manicure elegante con detalles dorados": "manicure-elegante-con-detalles-dorados",
-  "Mano descansando sobre toalla blanca": "mano-descansando-sobre-toalla-blanca",
-  "nail-geometrico": "nail-geometrico",
-  "Uñas con arte de copos de nieve": "uñas-con-arte-de-copos-de-nieve",
-  "Uñas de arte pop y diseño": "uñas-de-arte-pop-y-diseño"
+// Configuración de calidad por contexto de uso
+const QUALITY_BY_CONTEXT = {
+  'hero': 85,           // Alta calidad para conversión
+  'gallery-thumb': 60,  // Suficiente para thumbnails
+  'gallery-full': 90,   // Máxima calidad para lightbox
+  'general': 80         // Calidad estándar
 };
 
-function cleanImageName(src: string): string {
-  // Extraer nombre del archivo sin extensión
-  const fileName = src.split('/').pop()?.split('.')[0] || '';
-  
-  // Buscar en el mapping primero
-  if (imageMapping[fileName]) {
-    return imageMapping[fileName];
-  }
-  
-  // Si no está en el mapping, limpiar el nombre
-  return fileName
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[()]/g, '')
-    .replace(/--+/g, '-');
-}
+// Sizes responsive por contexto
+const SIZES_BY_CONTEXT = {
+  'hero': '(max-width: 768px) 100vw, 50vw',
+  'gallery-thumb': '(max-width: 768px) 50vw, 25vw', 
+  'gallery-full': '90vw',
+  'general': '(max-width: 768px) 100vw, 50vw'
+};
 
 export default function OptimizedImage({
   src,
@@ -82,161 +57,46 @@ export default function OptimizedImage({
   className = '',
   loading = 'lazy',
   priority = false,
-  quality = 90,
+  quality,
   sizes,
   fill = false,
   style,
-  onClick
+  onClick,
+  context = 'general'
 }: OptimizedImageProps) {
-  const [currentSrc, setCurrentSrc] = useState<string>(src);
-  const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  // Determinar si la imagen está en el directorio optimizado
-  const isOptimizedPath = src.startsWith('/optimized/') || src.includes('optimized');
-  
-  // Generar rutas para diferentes formatos
-  const cleanName = cleanImageName(src);
-  const baseOptimizedPath = `/optimized/${cleanName}`;
-  
-  useEffect(() => {
-    const imageSources = isOptimizedPath ? [src] : [
-      `${baseOptimizedPath}.avif`,
-      `${baseOptimizedPath}.webp`,
-      src // Fallback original
-    ];
-
-    if (isOptimizedPath) {
-      setCurrentSrc(src);
-      return;
-    }
-
-    // Probar formatos en orden de preferencia
-    async function findBestFormat() {
-      setIsLoading(true);
-      setHasError(false);
-      
-      for (const imageSrc of imageSources) {
-        try {
-          // Verificar si la imagen existe
-          const response = await fetch(imageSrc, { method: 'HEAD' });
-          if (response.ok) {
-            setCurrentSrc(imageSrc);
-            setIsLoading(false);
-            return;
-          }
-        } catch {
-          // Continuar con el siguiente formato
-          continue;
-        }
-      }
-      
-      // Si ningún formato optimizado funciona, usar el original
-      setCurrentSrc(src);
-      setIsLoading(false);
-    }
-
-    findBestFormat();
-  }, [src, baseOptimizedPath, isOptimizedPath]);
-
-  const handleLoad = () => {
-    setIsLoading(false);
-    setHasError(false);
-  };
+  // Determinar calidad y sizes por contexto si no se especifican
+  const finalQuality = quality || QUALITY_BY_CONTEXT[context];
+  const finalSizes = sizes || SIZES_BY_CONTEXT[context];
 
   const handleError = () => {
-    setIsLoading(false);
     setHasError(true);
-    
-    // Si hay error y no es la imagen original, intentar con la original
-    if (currentSrc !== src) {
-      setCurrentSrc(src);
-    }
   };
 
   const imageProps = {
-    src: currentSrc,
+    src,
     alt,
-    className: `${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`,
     loading,
     priority,
-    quality,
-    sizes,
-    onLoad: handleLoad,
+    quality: finalQuality,
+    sizes: finalSizes,
     onError: handleError,
-    style,
     onClick
   };
 
-  // Renderizar con o sin dimensiones fijas
-  if (fill) {
-    return (
-      <div className={`relative ${className}`} style={style} onClick={onClick}>
-        {isLoading && (
-          <div className="absolute inset-0 bg-gray-200 animate-pulse rounded" />
-        )}
-        <Image
-          {...imageProps}
-          fill
-          className={`${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-          alt={alt || ''}
-        />
-        {hasError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
-            <span>🖼️ Imagen no disponible</span>
-          </div>
-        )}
-      </div>
-    );
-  }
+  // Usar siempre dimensiones fijas - evitar position absolute de fill
+  const finalWidth = width || 500;
+  const finalHeight = height || 500;
 
   return (
-    <div className="relative inline-block">
-      {isLoading && width && height && (
-        <div 
-          className="absolute inset-0 bg-gray-200 animate-pulse rounded z-10"
-          style={{ width, height }}
-        />
-      )}
-      <Image
-        {...imageProps}
-        width={width}
-        height={height}
-        alt={alt || ''}
-      />
-      {hasError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
-          <span>🖼️ Imagen no disponible</span>
-        </div>
-      )}
-    </div>
+    <Image
+      {...imageProps}
+      width={finalWidth}
+      height={finalHeight}
+      className={`${className} ${fill ? 'w-full h-full object-cover' : ''}`}
+      style={style}
+      alt={alt}
+    />
   );
-}
-
-// Hook para precargar imágenes optimizadas
-export function usePreloadImages(imagePaths: string[]) {
-  useEffect(() => {
-    imagePaths.forEach(path => {
-      const cleanName = cleanImageName(path);
-      const avifSrc = `/optimized/${cleanName}.avif`;
-      const webpSrc = `/optimized/${cleanName}.webp`;
-      
-      // Precargar AVIF si el navegador lo soporta
-      if (typeof window !== 'undefined') {
-        const link1 = document.createElement('link');
-        link1.rel = 'preload';
-        link1.as = 'image';
-        link1.href = avifSrc;
-        link1.type = 'image/avif';
-        document.head.appendChild(link1);
-        
-        const link2 = document.createElement('link');
-        link2.rel = 'preload';
-        link2.as = 'image';
-        link2.href = webpSrc;
-        link2.type = 'image/webp';
-        document.head.appendChild(link2);
-      }
-    });
-  }, [imagePaths]);
 }
