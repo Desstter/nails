@@ -43,6 +43,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
+        {/* Google Ads Conversion Tracking - AW-17469563871 */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-17469563871"
           strategy="afterInteractive"
@@ -52,7 +53,27 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
+            
+            // Configuración principal de Google Ads
             gtag('config', 'AW-17469563871');
+            
+            // Función para trackear conversiones de WhatsApp
+            window.trackWhatsAppClick = function() {
+              gtag('event', 'conversion', {
+                'send_to': 'AW-17469563871',
+                'event_category': 'engagement',
+                'event_label': 'whatsapp_click'
+              });
+            };
+            
+            // Función para trackear visualización de servicios
+            window.trackServiceView = function(serviceName) {
+              gtag('event', 'view_item', {
+                'send_to': 'AW-17469563871',
+                'event_category': 'service',
+                'event_label': serviceName
+              });
+            };
           `}
         </Script>
       </head>

@@ -27,12 +27,9 @@ export default function Gallery() {
     { id: 8, category: "semi-permanente", title: null, description: null, image: "/Manicura francesa con ojos de mal de ojo.png" },
     { id: 9, category: "semi-permanente", title: null, description: null, image: "/Manicure elegante con detalles dorados.png" },
     { id: 10, category: "semi-permanente", title: null, description: null, image: "/Detalles delicados de uñas con brillo.png" },
-    { id: 11, category: "semi-permanente", title: null, description: null, image: "/Manicura francesa con corazones abstractos (1).png" },
     
     // Uñas Acrílicas con Molde
     { id: 12, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas elegante y detallado.png" },
-    { id: 13, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas elegante y detallado (2).png" },
-    { id: 14, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas elegante y detallado (3).png" },
     { id: 15, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas moderno y detallado.png" },
     { id: 16, category: "acrilicas-molde", title: null, description: null, image: "/Diseño de uñas acrílicas coloridas.png" },
     { id: 17, category: "acrilicas-molde", title: null, description: null, image: "/Arte de uñas con detalles dorados.png" },
@@ -78,7 +75,6 @@ export default function Gallery() {
     { id: 51, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas con mariposas y frase.png" },
     { id: 52, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas con mariposas y glitter.png" },
     { id: 53, category: "eventos-especiales", title: null, description: null, image: "/Arte de uñas con mensaje _LOVE_.png" },
-    { id: 54, category: "eventos-especiales", title: null, description: null, image: "/Mano descansando sobre toalla blanca.png" },
     { id: 55, category: "eventos-especiales", title: null, description: null, image: "/nails.png" }
   ], []);
 
