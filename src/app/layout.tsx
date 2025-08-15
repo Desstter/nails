@@ -8,6 +8,7 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
   display: "swap",
   preload: true,
+  weight: ["400","600","700"],
   fallback: ["Georgia", "serif"],
 });
 
