@@ -1,0 +1,94 @@
+// Joangel Nails Studio - Sistema de Reservas
+// Esquema de base de datos para agenda y booking
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Servicios disponibles (manicure, pedicure, etc.)
+model Service {
+  id           String  @id @default(cuid())
+  name         String
+  description  String?
+  durationMin  Int     // Duración en minutos
+  basePriceCOP Int     // Precio base en pesos colombianos
+  active       Boolean @default(true)
+  defaultBufferMin Int @default(15) // Buffer por defecto entre citas
+  
+  appointments Appointment[]
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@map("services")
+}
+
+// Horarios laborales por día de la semana
+model BusinessHour {
+  id        String @id @default(cuid())
+  weekday   Int    // 0=Domingo, 1=Lunes, ..., 6=Sábado
+  startTime String // Formato "HH:MM" (ej: "09:00")
+  endTime   String // Formato "HH:MM" (ej: "17:00")
+  active    Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([weekday])
+  @@map("business_hours")
+}
+
+// Citas/reservas de los clientes
+model Appointment {
+  id              String   @id @default(cuid())
+  serviceId       String
+  clientName      String
+  phoneWhatsApp   String
+  address         String
+  neighborhood    String
+  startAt         DateTime // Fecha y hora de inicio (America/Bogota)
+  endAt           DateTime // Fecha y hora de fin (America/Bogota)
+  status          String   @default("confirmed") // pending|confirmed|cancelled|completed
+  priceCOP        Int      // Precio final en pesos colombianos
+  notes           String?  // Notas adicionales del cliente
+  bookingPublicToken String @default(uuid()) // Token público para gestión sin login
+  
+  // Campos de tracking para Google Ads
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  utmContent      String?
+  utmTerm         String?
+  
+  // Relaciones
+  service         Service  @relation(fields: [serviceId], references: [id])
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([startAt])
+  @@index([serviceId])
+  @@index([status])
+  @@index([bookingPublicToken])
+  @@map("appointments")
+}
+
+// Bloqueos de tiempo (vacaciones, feriados, etc.)
+model BlockTime {
+  id        String   @id @default(cuid())
+  startAt   DateTime // Inicio del bloqueo
+  endAt     DateTime // Fin del bloqueo  
+  reason    String?  // Motivo del bloqueo
+  active    Boolean  @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([startAt, endAt])
+  @@map("block_times")
+}
