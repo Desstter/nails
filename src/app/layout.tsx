@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import Script from "next/script";
+import SessionProvider from "@/components/providers/SessionProvider";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -21,6 +22,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.PUBLIC_BASE_URL || 'http://localhost:3000'),
   title: "Joangel Nails Studio - Manicure y Pedicure Premium a Domicilio en Cali",
   description: "Manicure y pedicure de lujo a domicilio en Cali. Pago al finalizar, higiene certificada, 8 años de experiencia. Tu salón de belleza privado en casa.",
   keywords: "manicure a domicilio Cali, pedicure premium, uñas gel Cali, nail art domicilio, manicure profesional, belleza a domicilio Cali",
@@ -32,11 +34,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_CO",
     siteName: "Joangel Nails Studio",
+    images: ["/images/medium/Arte-celestial-en-unas-elegantes.webp"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Joangel Nails Studio - Manicure Premium a Domicilio",
     description: "Tu salón de belleza privado en casa. Manicure y pedicure de lujo en Cali",
+    images: ["/images/medium/Arte-celestial-en-unas-elegantes.webp"],
   },
 };
 
@@ -157,7 +161,9 @@ export default function RootLayout({
         className={`${playfair.variable} ${inter.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        {children}
+        <SessionProvider>
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );

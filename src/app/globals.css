@@ -381,4 +381,64 @@ nav h1.text-luxury-xl {
   overflow: hidden;
 }
 
+/* =============================================================================
+   RESERVA PAGE STYLES - Estilos específicos para la página de reservas
+   ============================================================================= */
+
+/* Colores adicionales para la página de reservas */
+.bg-cream-50 {
+  background-color: #fef9f3;
+}
+
+.bg-pink-50 {
+  background-color: #fdf2f8;
+}
+
+.from-cream-50 {
+  --tw-gradient-from: #fef9f3;
+  --tw-gradient-to: rgb(254 249 243 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-pink-50 {
+  --tw-gradient-to: #fdf2f8;
+}
+
+.from-yellow-50 {
+  --tw-gradient-from: #fefce8;
+  --tw-gradient-to: rgb(254 252 232 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-pink-50 {
+  --tw-gradient-to: #fdf2f8;
+}
+
+/* Estados de carga y animaciones */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Fin del archivo CSS simplificado para producción */

@@ -1,19 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import BookingCalendar from "./BookingCalendar";
+import type { Service } from "@/types/booking";
 
 declare global {
   interface Window {
     gtag: (command: string, targetId: string, parameters?: object) => void;
   }
-}
-
-interface Service {
-  id: string;
-  name: string;
-  duration: number; // in minutes
-  price: string;
-  description: string;
 }
 
 interface BookingData {
@@ -38,78 +32,20 @@ export default function FastBooking() {
     neighborhood: ""
   });
 
-  const services: Service[] = [
-    {
-      id: "semi-permanent",
-      name: "✨ Semi Permanente Premium",
-      duration: 75,
-      price: "COP $50.000",
-      description: "Técnica avanzada con acabado profesional de hasta 4 semanas. Ideal para manos impecables y brillantes por más tiempo."
-    },
-    {
-      id: "acrylic-mold",
-      name: "💅 Uñas Acrílicas con Molde",
-      duration: 120,
-      price: "COP $90.000",
-      description: "Diseño estructural personalizado para mayor resistencia y elegancia."
-    },
-    {
-      id: "acrylic-coating",
-      name: "💖 Forrado en Acrílico",
-      duration: 90,
-      price: "COP $75.000",
-      description: "Refuerzo ideal para uñas naturales, más fuertes y duraderas sin perder la naturalidad."
-    },
-    {
-      id: "acrylic-tips",
-      name: "🌟 Uñas Acrílicas con Tips",
-      duration: 100,
-      price: "COP $70.000",
-      description: "Extensiones rápidas y perfectas para lucir uñas largas y estilizadas."
-    }
-  ];
-
   const neighborhoods = [
     "Ciudad Jardín", "Santa Teresita", "El Peñón", "San Fernando",
     "Santa Rita", "Pance", "La Hacienda", "Bochalema", "Otro (especificar)"
   ];
 
-  const timeSlots = [
-    "9:00 AM", "11:00 AM", "2:00 PM", "4:00 PM", "6:00 PM"
-  ];
-
-  // Generate next 14 days, excluding past dates
-  const generateAvailableDates = () => {
-    const dates = [];
-    const today = new Date();
-    
-    for (let i = 0; i < 14; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      
-      // Skip Mondays (day 1) as the professional might not work
-      if (date.getDay() !== 1) {
-        dates.push({
-          date: date.toISOString().split('T')[0],
-          dayName: date.toLocaleDateString('es-CO', { weekday: 'short' }),
-          dayNumber: date.getDate(),
-          month: date.toLocaleDateString('es-CO', { month: 'short' })
-        });
-      }
-    }
-    return dates;
-  };
-
-  const availableDates = generateAvailableDates();
-
   const handleServiceSelect = (service: Service) => {
-    setBookingData({ ...bookingData, service });
-    setStep(2);
+    setBookingData({ ...bookingData, service, date: "", time: "" });
   };
 
   const handleDateTimeSelect = (date: string, time: string) => {
     setBookingData({ ...bookingData, date, time });
-    setStep(3);
+    if (date && time) {
+      setStep(3);
+    }
   };
 
   const handleClientInfo = (e: React.FormEvent) => {
@@ -117,24 +53,40 @@ export default function FastBooking() {
     setStep(4);
   };
 
-  const calculateEndTime = (startTime: string, duration: number) => {
-    const [time, period] = startTime.split(' ');
-    const [hours, minutes] = time.split(':').map(Number);
-    
-    let totalMinutes = (period === 'PM' && hours !== 12 ? hours + 12 : hours) * 60 + minutes;
-    totalMinutes += duration;
-    
+  const calculateEndTime = (startTime: string, durationMin: number) => {
+    // startTime viene en formato 24h "HH:MM"
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes + durationMin;
     const endHours = Math.floor(totalMinutes / 60);
     const endMins = totalMinutes % 60;
-    const endPeriod = endHours >= 12 ? 'PM' : 'AM';
-    const displayHours = endHours > 12 ? endHours - 12 : endHours === 0 ? 12 : endHours;
     
-    return `${displayHours}:${endMins.toString().padStart(2, '0')} ${endPeriod}`;
+    // Convertir a formato 12h
+    const period = endHours >= 12 ? 'PM' : 'AM';
+    const displayHours = endHours % 12 || 12;
+    
+    return `${displayHours}:${endMins.toString().padStart(2, '0')} ${period}`;
+  };
+
+  // Formatear tiempo de 24h a 12h
+  const formatTime12h = (time24: string) => {
+    const [hours, minutes] = time24.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const hours12 = hours % 12 || 12;
+    return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+  };
+
+  // Formatear precio con descuento
+  const formatServicePrice = (service: Service) => {
+    const discountedPrice = Math.max(0, service.basePriceCOP - 10000);
+    return `$${discountedPrice.toLocaleString('es-CO')} COP`;
   };
 
   const generateWhatsAppMessage = () => {
     const { service, date, time, clientName, clientPhone, neighborhood, address } = bookingData;
-    const endTime = service ? calculateEndTime(time, service.duration) : time;
+    if (!service) return '';
+    
+    const startTime12h = formatTime12h(time);
+    const endTime = calculateEndTime(time, service.durationMin);
     const formattedDate = new Date(date).toLocaleDateString('es-CO', { 
       weekday: 'long', 
       year: 'numeric', 
@@ -142,26 +94,25 @@ export default function FastBooking() {
       day: 'numeric' 
     });
 
-    const originalPrice = service?.id === "semi-permanent" ? "COP $60.000" :
-                         service?.id === "acrylic-mold" ? "COP $100.000" :
-                         service?.id === "acrylic-coating" ? "COP $85.000" : "COP $80.000";
+    const originalPrice = `$${service.basePriceCOP.toLocaleString('es-CO')} COP`;
+    const finalPrice = formatServicePrice(service);
 
     return encodeURIComponent(
       `🗓️ NUEVA CITA AGENDADA - FORMULARIO WEB\n\n` +
       `👩‍💼 Cliente: ${clientName}\n` +
       `📱 Teléfono: ${clientPhone}\n\n` +
-      `💅 Servicio: ${service?.name}\n` +
+      `💅 Servicio: ${service.name}\n` +
       `💰 Precio original: ${originalPrice}\n` +
       `🎉 Descuento primera vez: -$10.000\n` +
-      `💚 Precio final: ${service?.price}\n` +
-      `⏰ Duración: ${service?.duration} minutos\n\n` +
+      `💚 Precio final: ${finalPrice}\n` +
+      `⏰ Duración: ${service.durationMin} minutos\n\n` +
       `📅 Fecha: ${formattedDate}\n` +
-      `🕐 Hora: ${time} - ${endTime}\n\n` +
+      `🕐 Hora: ${startTime12h} - ${endTime}\n\n` +
       `📍 Ubicación:\n` +
       `Barrio: ${neighborhood}\n` +
       `Dirección: ${address}\n\n` +
       `✅ Confirma disponibilidad por favor.\n` +
-      `💳 Pago al finalizar: ${service?.price} (descuento ya aplicado)`
+      `💳 Pago al finalizar: ${finalPrice} (descuento ya aplicado)`
     );
   };
 
@@ -228,110 +179,15 @@ export default function FastBooking() {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          {/* Step 1: Service Selection */}
-          {step === 1 && (
-            <div className="space-y-6">
-              <h3 className="text-2xl font-semibold text-center mb-8">1. Elige tu Servicio</h3>
-              <div className="grid md:grid-cols-3 gap-6">
-                {services.map((service) => (
-                  <button
-                    key={service.id}
-                    onClick={() => handleServiceSelect(service)}
-                    className="bg-white border-2 border-gray-200 hover:border-yellow-400 rounded-2xl p-6 text-left transition-all duration-300 hover:shadow-elegant group"
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <h4 className="text-xl font-semibold text-gray-800 group-hover:text-yellow-600">
-                        {service.name}
-                      </h4>
-                      <div className="text-right">
-                        <div className="text-sm text-gray-500 line-through">
-                          {service.id === "semi-permanent" ? "COP $60.000" :
-                           service.id === "acrylic-mold" ? "COP $100.000" :
-                           service.id === "acrylic-coating" ? "COP $85.000" : "COP $80.000"}
-                        </div>
-                        <div className="text-2xl font-bold text-green-600">{service.price}</div>
-                        <div className="text-xs text-green-600 font-medium">¡Descuento aplicado!</div>
-                      </div>
-                    </div>
-                    <p className="text-gray-600 mb-4">{service.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">⏱️ {service.duration} min</span>
-                      <span className="text-yellow-600 font-medium">Seleccionar →</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Date & Time Selection */}
-          {step === 2 && bookingData.service && (
-            <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-semibold mb-2">2. Elige Fecha y Hora</h3>
-                <p className="text-gray-600">
-                  Servicio: <strong>{bookingData.service.name}</strong> • 
-                  Duración: <strong>{bookingData.service.duration} min</strong>
-                </p>
-              </div>
-
-              {/* Date Selection */}
-              <div className="mb-8">
-                <h4 className="text-lg font-medium mb-4">Selecciona la fecha:</h4>
-                <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3">
-                  {availableDates.map((dateObj) => (
-                    <button
-                      key={dateObj.date}
-                      onClick={() => setBookingData({ ...bookingData, date: dateObj.date })}
-                      className={`p-4 rounded-xl border-2 transition-all duration-300 ${
-                        bookingData.date === dateObj.date
-                          ? 'border-yellow-400 bg-yellow-50'
-                          : 'border-gray-200 hover:border-yellow-300 hover:bg-yellow-50'
-                      }`}
-                    >
-                      <div className="text-center">
-                        <div className="text-xs text-gray-500 uppercase mb-1">{dateObj.dayName}</div>
-                        <div className="text-lg font-semibold text-gray-800">{dateObj.dayNumber}</div>
-                        <div className="text-xs text-gray-500">{dateObj.month}</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Time Selection */}
-              {bookingData.date && (
-                <div className="mb-8">
-                  <h4 className="text-lg font-medium mb-4">Selecciona la hora:</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                    {timeSlots.map((time) => {
-                      const endTime = calculateEndTime(time, bookingData.service!.duration);
-                      return (
-                        <button
-                          key={time}
-                          onClick={() => handleDateTimeSelect(bookingData.date, time)}
-                          className="p-4 border-2 border-gray-200 hover:border-yellow-400 hover:bg-yellow-50 rounded-xl transition-all duration-300"
-                        >
-                          <div className="text-center">
-                            <div className="font-semibold text-gray-800">{time}</div>
-                            <div className="text-xs text-gray-500">hasta {endTime}</div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              <div className="flex gap-4">
-                <button
-                  onClick={() => setStep(1)}
-                  className="btn-secondary"
-                >
-                  ← Cambiar Servicio
-                </button>
-              </div>
-            </div>
+          {/* Steps 1 & 2: Service Selection and Booking Calendar */}
+          {(step === 1 || step === 2) && (
+            <BookingCalendar
+              onServiceSelect={handleServiceSelect}
+              onDateTimeSelect={handleDateTimeSelect}
+              selectedService={bookingData.service}
+              selectedDate={bookingData.date}
+              selectedTime={bookingData.time}
+            />
           )}
 
           {/* Step 3: Client Information */}
@@ -406,10 +262,10 @@ export default function FastBooking() {
                 <div className="flex gap-4">
                   <button
                     type="button"
-                    onClick={() => setStep(2)}
+                    onClick={() => setStep(1)}
                     className="btn-secondary"
                   >
-                    ← Cambiar Fecha/Hora
+                    ← Cambiar Servicio/Fecha
                   </button>
                   <button type="submit" className="btn-primary flex-1">
                     Continuar →
@@ -439,11 +295,13 @@ export default function FastBooking() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Precio:</span>
-                        <span className="font-medium text-yellow-600">{bookingData.service?.price}</span>
+                        <span className="font-medium text-yellow-600">
+                          {bookingData.service ? formatServicePrice(bookingData.service) : ''}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Duración:</span>
-                        <span className="font-medium">{bookingData.service?.duration} minutos</span>
+                        <span className="font-medium">{bookingData.service?.durationMin} minutos</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Fecha:</span>
@@ -458,7 +316,7 @@ export default function FastBooking() {
                       <div className="flex justify-between">
                         <span className="text-gray-600">Hora:</span>
                         <span className="font-medium">
-                          {bookingData.time} - {calculateEndTime(bookingData.time, bookingData.service?.duration || 0)}
+                          {formatTime12h(bookingData.time)} - {calculateEndTime(bookingData.time, bookingData.service?.durationMin || 0)}
                         </span>
                       </div>
                     </div>
@@ -495,7 +353,7 @@ export default function FastBooking() {
                     <span className="font-semibold text-green-700">Recordatorio de Pago</span>
                   </div>
                   <p className="text-green-600 text-sm">
-                    <strong>No hay pago anticipado.</strong> Pagas {bookingData.service?.price} al finalizar el servicio 
+                    <strong>No hay pago anticipado.</strong> Pagas {bookingData.service ? formatServicePrice(bookingData.service) : ''} al finalizar el servicio 
                     (ya incluye descuento de $10.000 por primera vez). 
                     Acepto efectivo, Nequi, Bancolombia o transferencia.
                   </p>
