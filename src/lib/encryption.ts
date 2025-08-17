@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'dev_encryption_key_32_chars_min'
-const ALGORITHM = 'aes-256-gcm'
+const ALGORITHM = 'aes-256-cbc'
 
 // Asegurar que la clave tenga 32 caracteres
 const normalizeKey = (key: string): Buffer => {

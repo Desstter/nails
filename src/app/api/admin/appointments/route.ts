@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { createCalendarEvent, getCalendarConfig } from '@/lib/google-calendar'
 import type { APIResponse } from '@/types/booking'
 
 export async function POST(request: NextRequest) {
@@ -106,6 +107,43 @@ export async function POST(request: NextRequest) {
         }
       }
     })
+
+    // Intentar crear evento en Google Calendar automáticamente
+    try {
+      console.log('📅 Verificando configuración de Google Calendar...')
+      
+      // Verificar si Google Calendar está configurado y activo
+      const calendarConfig = await getCalendarConfig(session.user.id)
+      
+      if (calendarConfig && calendarConfig.isConnected && calendarConfig.autoCreateEvents) {
+        console.log('✅ Google Calendar está configurado - creando evento...')
+        
+        const googleEvent = await createCalendarEvent(session.user.id, newAppointment)
+        
+        console.log('🎉 Evento creado en Google Calendar:', {
+          appointmentId: newAppointment.id,
+          googleEventId: googleEvent.id,
+          title: googleEvent.summary
+        })
+        
+        console.log('📊 Detalles del evento:', {
+          cliente: newAppointment.clientName,
+          servicio: newAppointment.service.name,
+          fecha: newAppointment.startAt.toLocaleString('es-CO'),
+          direccion: `${newAppointment.address}, ${newAppointment.neighborhood}`
+        })
+        
+      } else {
+        console.log('⚠️ Google Calendar no configurado o autoCreate deshabilitado:', {
+          isConnected: calendarConfig?.isConnected || false,
+          autoCreateEnabled: calendarConfig?.autoCreateEvents || false
+        })
+      }
+    } catch (calendarError) {
+      console.error('❌ Error creando evento en Google Calendar:', calendarError)
+      // No fallar la creación de la cita por un error del calendario
+      // El error se loggea pero la cita se crea exitosamente
+    }
 
     const response: APIResponse<{ appointment: typeof newAppointment }> = {
       success: true,

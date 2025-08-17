@@ -9,7 +9,14 @@ export async function GET(request: NextRequest) {
     // Verificar autenticación
     const session = await getServerSession(authOptions)
     
+    console.log('🔐 Session check for Google Calendar connect:', {
+      hasSession: !!session,
+      userId: session?.user?.id,
+      userRole: session?.user?.role
+    })
+    
     if (!session?.user || session.user.role !== 'admin') {
+      console.log('❌ Unauthorized access to Google Calendar connect')
       const errorResponse: APIResponse<never> = {
         success: false,
         error: {
@@ -21,7 +28,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Generar URL de autorización
+    console.log('📲 Generating Google auth URL...')
     const authUrl = getAuthUrl()
+    console.log('✅ Generated auth URL:', authUrl)
 
     const response: APIResponse<{ authUrl: string }> = {
       success: true,

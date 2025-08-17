@@ -14,6 +14,11 @@ export function getOAuth2Client(): OAuth2Client {
 
 // Obtener URL de autorización para conectar Google Calendar
 export function getAuthUrl(): string {
+  console.log('🔧 Creating OAuth2 client with config:', {
+    clientId: process.env.GOOGLE_CLIENT_ID?.substring(0, 20) + '...',
+    redirectUri: process.env.GOOGLE_REDIRECT_URI
+  })
+  
   const oauth2Client = getOAuth2Client()
   
   const scopes = [
@@ -21,11 +26,14 @@ export function getAuthUrl(): string {
     'https://www.googleapis.com/auth/calendar.readonly'
   ]
 
-  return oauth2Client.generateAuthUrl({
+  const authUrl = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: scopes,
     prompt: 'consent' // Fuerza a mostrar pantalla de consentimiento
   })
+  
+  console.log('📋 Generated auth URL with scopes:', scopes)
+  return authUrl
 }
 
 // Intercambiar código de autorización por tokens
@@ -33,7 +41,7 @@ export async function exchangeCodeForTokens(code: string, userId: string) {
   const oauth2Client = getOAuth2Client()
   
   try {
-    const { tokens } = await oauth2Client.getAccessToken(code)
+    const { tokens } = await oauth2Client.getToken(code)
     
     if (!tokens.access_token || !tokens.refresh_token) {
       throw new Error('No se obtuvieron todos los tokens necesarios')

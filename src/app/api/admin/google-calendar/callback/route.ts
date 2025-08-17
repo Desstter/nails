@@ -6,10 +6,19 @@ import type { APIResponse } from '@/types/booking'
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('🔄 Google Calendar callback received')
+    
     // Verificar autenticación
     const session = await getServerSession(authOptions)
     
+    console.log('🔐 Session check in callback:', {
+      hasSession: !!session,
+      userId: session?.user?.id,
+      userRole: session?.user?.role
+    })
+    
     if (!session?.user || session.user.role !== 'admin') {
+      console.log('❌ Unauthorized callback access, redirecting to login')
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
 
@@ -18,14 +27,24 @@ export async function GET(request: NextRequest) {
     const code = searchParams.get('code')
     const error = searchParams.get('error')
 
+    console.log('📋 Callback parameters:', {
+      hasCode: !!code,
+      codeLength: code?.length || 0,
+      error: error,
+      fullUrl: request.url
+    })
+
     if (error || !code) {
+      console.log('❌ Authorization failed, redirecting with error')
       return NextResponse.redirect(
         new URL('/admin/calendar?error=authorization_failed', request.url)
       )
     }
 
     // Intercambiar código por tokens
+    console.log('🔄 Exchanging code for tokens...')
     await exchangeCodeForTokens(code, session.user.id)
+    console.log('✅ Tokens exchanged successfully')
 
     // Redirigir a configuración de calendario con éxito
     return NextResponse.redirect(

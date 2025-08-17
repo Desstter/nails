@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { updateCalendarEvent, deleteCalendarEvent, getCalendarConfig } from '@/lib/google-calendar'
 import type { APIResponse } from '@/types/booking'
 
 interface RouteParams {
@@ -166,6 +167,39 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       }
     })
 
+    // Actualizar evento en Google Calendar si está configurado
+    try {
+      console.log('📅 Verificando si actualizar evento en Google Calendar...')
+      
+      const calendarConfig = await getCalendarConfig(session.user.id)
+      
+      if (calendarConfig && calendarConfig.isConnected && updatedAppointment.googleEventId) {
+        console.log('✅ Actualizando evento en Google Calendar:', updatedAppointment.googleEventId)
+        
+        await updateCalendarEvent(
+          session.user.id,
+          updatedAppointment.googleEventId,
+          updatedAppointment
+        )
+        
+        console.log('🎉 Evento actualizado en Google Calendar:', {
+          appointmentId: updatedAppointment.id,
+          googleEventId: updatedAppointment.googleEventId,
+          cliente: updatedAppointment.clientName,
+          servicio: updatedAppointment.service.name
+        })
+        
+      } else {
+        console.log('⚠️ No se puede actualizar evento:', {
+          isConnected: calendarConfig?.isConnected || false,
+          hasGoogleEventId: !!updatedAppointment.googleEventId
+        })
+      }
+    } catch (calendarError) {
+      console.error('❌ Error actualizando evento en Google Calendar:', calendarError)
+      // No fallar la actualización de la cita por un error del calendario
+    }
+
     const response: APIResponse<{ appointment: typeof updatedAppointment }> = {
       success: true,
       data: {
@@ -233,6 +267,34 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         }
       }
       return NextResponse.json(errorResponse, { status: 404 })
+    }
+
+    // Eliminar evento de Google Calendar si existe
+    try {
+      console.log('📅 Verificando si eliminar evento de Google Calendar...')
+      
+      const calendarConfig = await getCalendarConfig(session.user.id)
+      
+      if (calendarConfig && calendarConfig.isConnected && existingAppointment.googleEventId) {
+        console.log('🗑️ Eliminando evento de Google Calendar:', existingAppointment.googleEventId)
+        
+        await deleteCalendarEvent(session.user.id, existingAppointment.googleEventId)
+        
+        console.log('✅ Evento eliminado de Google Calendar:', {
+          appointmentId: existingAppointment.id,
+          googleEventId: existingAppointment.googleEventId,
+          cliente: existingAppointment.clientName
+        })
+        
+      } else {
+        console.log('⚠️ No se puede eliminar evento:', {
+          isConnected: calendarConfig?.isConnected || false,
+          hasGoogleEventId: !!existingAppointment.googleEventId
+        })
+      }
+    } catch (calendarError) {
+      console.error('❌ Error eliminando evento de Google Calendar:', calendarError)
+      // No fallar la eliminación de la cita por un error del calendario
     }
 
     // Eliminar la cita (solo en casos extremos)
