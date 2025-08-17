@@ -7,7 +7,7 @@ import {
   ArrowLeftIcon,
   CurrencyDollarIcon,
   CalendarDaysIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   ChartBarIcon
 } from '@heroicons/react/24/outline'
 
@@ -198,7 +198,7 @@ export default function ReportsManager() {
                       ${Math.round(reportData.avgAppointmentValue).toLocaleString()}
                     </p>
                   </div>
-                  <TrendingUpIcon className="h-10 w-10 text-luxury-gold" />
+                  <ArrowTrendingUpIcon className="h-10 w-10 text-luxury-gold" />
                 </div>
               </div>
 

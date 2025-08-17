@@ -65,6 +65,10 @@ model Appointment {
   utmContent      String?
   utmTerm         String?
   
+  // Google Calendar integration
+  googleEventId   String?  // ID del evento en Google Calendar
+  calendarInviteSent Boolean @default(false) // Si se envió invite al cliente
+  
   // Relaciones
   service         Service  @relation(fields: [serviceId], references: [id])
   
@@ -132,6 +136,7 @@ model User {
   role          String    @default("admin") // Solo admin para este proyecto
   accounts      Account[]
   sessions      Session[]
+  googleCalendarConfig GoogleCalendarConfig?
 
   @@map("users")
 }
@@ -143,4 +148,27 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+// Configuración de Google Calendar
+model GoogleCalendarConfig {
+  id                String   @id @default(cuid())
+  userId            String   @unique // Un config por usuario admin
+  calendarId        String?  // ID del calendario principal de Google
+  accessToken       String?  // Token de acceso (encriptado)
+  refreshToken      String?  // Token de refresh (encriptado)
+  tokenExpiry       DateTime? // Expiración del access token
+  isConnected       Boolean  @default(false)
+  
+  // Configuraciones de sincronización
+  autoCreateEvents  Boolean  @default(true)  // Crear eventos automáticamente
+  sendClientInvites Boolean  @default(true)  // Enviar invites a clientes
+  syncBidirectional Boolean  @default(false) // Sincronización bidireccional
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("google_calendar_configs")
 }

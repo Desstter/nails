@@ -1,6 +1,8 @@
 // API para crear reservas reales con validación atómica
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { createCalendarEvent } from '@/lib/google-calendar'
+import { sendAppointmentConfirmation } from '@/lib/whatsapp-notifications'
 import type { APIResponse, CreateAppointmentRequest } from '@/types/booking'
 
 export async function POST(request: NextRequest) {
@@ -188,6 +190,36 @@ export async function POST(request: NextRequest) {
 
       return appointment
     })
+
+    // Intentar crear evento en Google Calendar (no bloqueante)
+    try {
+      // Buscar admin user (assumimos que hay uno solo con role 'admin')
+      const adminUser = await prisma.user.findFirst({
+        where: { role: 'admin' },
+        include: { googleCalendarConfig: true }
+      })
+
+      if (adminUser?.googleCalendarConfig?.isConnected && adminUser.googleCalendarConfig.autoCreateEvents) {
+        await createCalendarEvent(adminUser.id, result)
+        console.log(`✅ Google Calendar event created for appointment ${result.id}`)
+      }
+    } catch (calendarError) {
+      // Log del error pero no falla la reserva
+      console.error('⚠️ Google Calendar event creation failed:', calendarError)
+    }
+
+    // Enviar confirmación por WhatsApp (no bloqueante)
+    try {
+      const confirmationSent = await sendAppointmentConfirmation(result)
+      if (confirmationSent) {
+        console.log(`✅ WhatsApp confirmation sent for appointment ${result.id}`)
+      } else {
+        console.log(`⚠️ WhatsApp confirmation failed for appointment ${result.id}`)
+      }
+    } catch (whatsappError) {
+      // Log del error pero no falla la reserva
+      console.error('⚠️ WhatsApp confirmation failed:', whatsappError)
+    }
 
     // Respuesta exitosa
     const successResponse: APIResponse<{

@@ -313,6 +313,17 @@ export default function ManageAppointment({ token }: ManageAppointmentProps) {
                 📱 Contactar por WhatsApp
               </a>
 
+              {/* Descargar calendario - solo para citas futuras o no canceladas */}
+              {!isCancelled && (
+                <a
+                  href={`/api/appointments/${appointment.bookingPublicToken}/ics`}
+                  download
+                  className="block w-full bg-luxury-gold text-white px-6 py-4 rounded-lg hover:bg-luxury-gold/90 transition-colors font-semibold text-center"
+                >
+                  📅 Agregar a mi Calendario
+                </a>
+              )}
+
               {/* Cancelar - solo para citas futuras no canceladas */}
               {!isPast && !isCancelled && !isCompleted && (
                 <button

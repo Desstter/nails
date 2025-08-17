@@ -8,7 +8,8 @@ import {
   UserGroupIcon,
   CurrencyDollarIcon,
   ClockIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  LinkIcon
 } from '@heroicons/react/24/outline'
 
 interface DashboardStats {
@@ -153,7 +154,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
             href="/admin/appointments"
             className="bg-white rounded-xl shadow-sm p-6 border border-luxury-gold/10 hover:shadow-md transition-shadow group"
@@ -190,6 +191,19 @@ export default function AdminDashboard() {
             </div>
             <p className="text-charcoal/60 text-sm">
               Análisis de ingresos y estadísticas del negocio
+            </p>
+          </Link>
+
+          <Link
+            href="/admin/calendar"
+            className="bg-white rounded-xl shadow-sm p-6 border border-luxury-gold/10 hover:shadow-md transition-shadow group"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-charcoal">Google Calendar</h3>
+              <LinkIcon className="h-6 w-6 text-luxury-gold group-hover:scale-110 transition-transform" />
+            </div>
+            <p className="text-charcoal/60 text-sm">
+              Sincronizar citas con tu Google Calendar personal
             </p>
           </Link>
         </div>
