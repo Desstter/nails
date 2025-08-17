@@ -72,6 +72,85 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       allowedUpdates.priceCOP = body.priceCOP
     }
 
+    // Campos adicionales para edición completa
+    if (body.clientName?.trim()) {
+      allowedUpdates.clientName = body.clientName.trim()
+    }
+
+    if (body.phoneWhatsApp?.trim()) {
+      allowedUpdates.phoneWhatsApp = body.phoneWhatsApp.trim()
+    }
+
+    if (body.address?.trim()) {
+      allowedUpdates.address = body.address.trim()
+    }
+
+    if (body.neighborhood?.trim()) {
+      allowedUpdates.neighborhood = body.neighborhood.trim()
+    }
+
+    // Cambio de servicio y/o fecha
+    if (body.serviceId || body.startAt) {
+      const serviceId = body.serviceId || existingAppointment.serviceId
+      const startAt = body.startAt ? new Date(body.startAt) : existingAppointment.startAt
+
+      // Verificar que el servicio existe si se está cambiando
+      if (body.serviceId && body.serviceId !== existingAppointment.serviceId) {
+        const service = await prisma.service.findUnique({
+          where: { id: serviceId, active: true }
+        })
+
+        if (!service) {
+          const errorResponse: APIResponse<never> = {
+            success: false,
+            error: {
+              error: 'SERVICE_NOT_FOUND',
+              message: 'Servicio no encontrado o inactivo'
+            }
+          }
+          return NextResponse.json(errorResponse, { status: 404 })
+        }
+
+        // Calcular nueva hora de fin basada en el nuevo servicio
+        const endAt = new Date(startAt.getTime() + service.durationMin * 60000)
+        allowedUpdates.serviceId = serviceId
+        allowedUpdates.startAt = startAt
+        allowedUpdates.endAt = endAt
+      } else if (body.startAt) {
+        // Solo cambio de fecha/hora, mantener duración del servicio actual
+        const endAt = new Date(startAt.getTime() + existingAppointment.service.durationMin * 60000)
+        allowedUpdates.startAt = startAt
+        allowedUpdates.endAt = endAt
+      }
+
+      // Verificar conflictos de horario (excluyendo la cita actual)
+      if (allowedUpdates.startAt && allowedUpdates.endAt) {
+        const conflictingAppointment = await prisma.appointment.findFirst({
+          where: {
+            id: { not: id },
+            status: { in: ['pending', 'confirmed'] },
+            OR: [
+              {
+                startAt: { lt: allowedUpdates.endAt },
+                endAt: { gt: allowedUpdates.startAt }
+              }
+            ]
+          }
+        })
+
+        if (conflictingAppointment) {
+          const errorResponse: APIResponse<never> = {
+            success: false,
+            error: {
+              error: 'TIME_CONFLICT',
+              message: 'Ya existe una cita en ese horario'
+            }
+          }
+          return NextResponse.json(errorResponse, { status: 409 })
+        }
+      }
+    }
+
     // Actualizar la cita
     const updatedAppointment = await prisma.appointment.update({
       where: { id },

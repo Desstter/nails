@@ -3,13 +3,21 @@
 import { useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import CreateAppointmentModal from './CreateAppointmentModal'
+import EditAppointmentModal from './EditAppointmentModal'
+import Toast from './Toast'
 import { 
   ArrowLeftIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
   CalendarDaysIcon,
   PhoneIcon,
-  MapPinIcon
+  MapPinIcon,
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline'
 
 interface Appointment {
@@ -53,23 +61,48 @@ export default function AppointmentsManager() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [selectedDate, setSelectedDate] = useState('')
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ type: 'success' | 'error', message: string } | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
+  const [totalAppointments, setTotalAppointments] = useState(0)
 
   useEffect(() => {
     if (status === 'authenticated') {
       fetchAppointments()
     }
-  }, [status])
+  }, [status, currentPage, statusFilter, selectedDate])
 
   const fetchAppointments = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/admin/appointments')
+      const params = new URLSearchParams({
+        limit: itemsPerPage.toString(),
+        offset: ((currentPage - 1) * itemsPerPage).toString()
+      })
+      
+      if (statusFilter && statusFilter !== 'all') {
+        params.append('status', statusFilter)
+      }
+      
+      if (selectedDate) {
+        params.append('date', selectedDate)
+      }
+
+      const response = await fetch(`/api/admin/appointments?${params}`)
       if (response.ok) {
         const data = await response.json()
         setAppointments(data.data.appointments)
+        setTotalAppointments(data.data.total)
+      } else {
+        setToast({ type: 'error', message: 'Error al cargar las citas' })
       }
     } catch (error) {
       console.error('Error fetching appointments:', error)
+      setToast({ type: 'error', message: 'Error de conexión al cargar las citas' })
     } finally {
       setLoading(false)
     }
@@ -94,29 +127,73 @@ export default function AppointmentsManager() {
               : apt
           )
         )
+        setToast({ type: 'success', message: 'Estado de cita actualizado exitosamente' })
       } else {
-        alert('Error al actualizar el estado de la cita')
+        setToast({ type: 'error', message: 'Error al actualizar el estado de la cita' })
       }
     } catch (error) {
       console.error('Error updating appointment:', error)
-      alert('Error al actualizar la cita')
+      setToast({ type: 'error', message: 'Error de conexión al actualizar la cita' })
     }
   }
 
-  // Filtrar citas
-  const filteredAppointments = appointments.filter(appointment => {
-    const matchesSearch = 
-      appointment.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment.phoneWhatsApp.includes(searchTerm) ||
-      appointment.service.name.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesStatus = statusFilter === 'all' || appointment.status === statusFilter
-    
-    const matchesDate = !selectedDate || 
-      new Date(appointment.startAt).toISOString().split('T')[0] === selectedDate
+  const deleteAppointment = async (appointmentId: string) => {
+    try {
+      const response = await fetch(`/api/admin/appointments/${appointmentId}`, {
+        method: 'DELETE',
+      })
 
-    return matchesSearch && matchesStatus && matchesDate
+      if (response.ok) {
+        // Remover de la lista local
+        setAppointments(prev => prev.filter(apt => apt.id !== appointmentId))
+        setShowDeleteConfirm(null)
+        setToast({ type: 'success', message: 'Cita eliminada exitosamente' })
+      } else {
+        setToast({ type: 'error', message: 'Error al eliminar la cita' })
+      }
+    } catch (error) {
+      console.error('Error deleting appointment:', error)
+      setToast({ type: 'error', message: 'Error de conexión al eliminar la cita' })
+    }
+  }
+
+  const handleEditAppointment = (appointment: Appointment) => {
+    setEditingAppointment(appointment)
+    setShowEditModal(true)
+  }
+
+  const handleModalSuccess = () => {
+    fetchAppointments() // Recargar lista después de crear/editar
+    setToast({ type: 'success', message: 'Operación completada exitosamente' })
+  }
+
+  // Filtrar citas solo por búsqueda (el resto se maneja en el backend)
+  const filteredAppointments = appointments.filter(appointment => {
+    if (!searchTerm) return true
+    
+    const searchLower = searchTerm.toLowerCase()
+    return (
+      appointment.clientName.toLowerCase().includes(searchLower) ||
+      appointment.phoneWhatsApp.includes(searchTerm) ||
+      appointment.service.name.toLowerCase().includes(searchLower)
+    )
   })
+
+  const totalPages = Math.ceil(totalAppointments / itemsPerPage)
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage)
+  }
+
+  const handleFilterChange = (filterType: 'status' | 'date', value: string) => {
+    setCurrentPage(1) // Reset to first page when filtering
+    if (filterType === 'status') {
+      setStatusFilter(value)
+    } else {
+      setSelectedDate(value)
+    }
+  }
+
 
   if (status === 'loading') {
     return (
@@ -142,6 +219,8 @@ export default function AppointmentsManager() {
     )
   }
 
+  console.log('AppointmentsManager render - status:', status, 'showCreateModal:', showCreateModal)
+
   return (
     <div className="min-h-screen bg-cream">
       {/* Header */}
@@ -164,6 +243,17 @@ export default function AppointmentsManager() {
                 </p>
               </div>
             </div>
+            <button
+              onClick={() => {
+                console.log('Botón Nueva Cita clickeado!')
+                setShowCreateModal(true)
+              }}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center gap-2 border-2 border-black"
+              style={{ backgroundColor: 'red', color: 'white', padding: '10px', fontSize: '16px' }}
+            >
+              <PlusIcon className="h-5 w-5" />
+              ⭐ NUEVA CITA ⭐
+            </button>
           </div>
         </div>
       </header>
@@ -189,7 +279,7 @@ export default function AppointmentsManager() {
               <FunnelIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-charcoal/40" />
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                onChange={(e) => handleFilterChange('status', e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-luxury-gold focus:border-transparent appearance-none"
               >
                 <option value="all">Todos los estados</option>
@@ -206,7 +296,7 @@ export default function AppointmentsManager() {
               <input
                 type="date"
                 value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
+                onChange={(e) => handleFilterChange('date', e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-luxury-gold focus:border-transparent"
               />
             </div>
@@ -305,6 +395,16 @@ export default function AppointmentsManager() {
                   <div className="space-y-2">
                     <h4 className="font-medium text-charcoal">Acciones</h4>
                     <div className="flex flex-col gap-2">
+                      {/* Botones principales de edición */}
+                      <button
+                        onClick={() => handleEditAppointment(appointment)}
+                        className="px-3 py-1 bg-luxury-gold/10 text-luxury-gold rounded-lg text-sm hover:bg-luxury-gold/20 transition-colors flex items-center gap-1"
+                      >
+                        <PencilIcon className="h-3 w-3" />
+                        Editar
+                      </button>
+                      
+                      {/* Cambio de estado rápido */}
                       {appointment.status === 'pending' && (
                         <button
                           onClick={() => updateAppointmentStatus(appointment.id, 'confirmed')}
@@ -334,10 +434,19 @@ export default function AppointmentsManager() {
                       <Link
                         href={`/reservar/${appointment.bookingPublicToken}`}
                         target="_blank"
-                        className="px-3 py-1 bg-luxury-gold/10 text-luxury-gold rounded-lg text-sm hover:bg-luxury-gold/20 transition-colors text-center"
+                        className="px-3 py-1 bg-gray-100 text-charcoal rounded-lg text-sm hover:bg-gray-200 transition-colors text-center"
                       >
                         Ver Detalles
                       </Link>
+                      
+                      {/* Botón de eliminar */}
+                      <button
+                        onClick={() => setShowDeleteConfirm(appointment.id)}
+                        className="px-3 py-1 bg-red-50 text-red-600 rounded-lg text-sm hover:bg-red-100 transition-colors flex items-center gap-1"
+                      >
+                        <TrashIcon className="h-3 w-3" />
+                        Eliminar
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -345,7 +454,111 @@ export default function AppointmentsManager() {
             ))
           )}
         </div>
+
+        {/* Paginación */}
+        {totalPages > 1 && (
+          <div className="bg-white rounded-xl shadow-sm p-4 border border-luxury-gold/10 mt-6">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-charcoal/60">
+                Mostrando {Math.min((currentPage - 1) * itemsPerPage + 1, totalAppointments)} - {Math.min(currentPage * itemsPerPage, totalAppointments)} de {totalAppointments} citas
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="p-2 text-charcoal/60 hover:text-luxury-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeftIcon className="h-5 w-5" />
+                </button>
+                
+                <div className="flex gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    const pageNum = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i
+                    if (pageNum > totalPages) return null
+                    
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                          pageNum === currentPage
+                            ? 'bg-luxury-gold text-white'
+                            : 'text-charcoal/60 hover:bg-luxury-gold/10'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    )
+                  })}
+                </div>
+                
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="p-2 text-charcoal/60 hover:text-luxury-gold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRightIcon className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
+
+      {/* Modales */}
+      <CreateAppointmentModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleModalSuccess}
+      />
+
+      <EditAppointmentModal
+        isOpen={showEditModal}
+        appointment={editingAppointment}
+        onClose={() => {
+          setShowEditModal(false)
+          setEditingAppointment(null)
+        }}
+        onSuccess={handleModalSuccess}
+      />
+
+      {/* Confirmación de eliminación */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <h3 className="text-xl font-playfair font-bold text-charcoal mb-4">
+              Confirmar Eliminación
+            </h3>
+            <p className="text-charcoal/80 mb-6">
+              ¿Estás seguro de que quieres eliminar esta cita? Esta acción no se puede deshacer.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowDeleteConfirm(null)}
+                className="flex-1 px-4 py-2 border border-gray-300 text-charcoal rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => deleteAppointment(showDeleteConfirm)}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast notifications */}
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   )
 }

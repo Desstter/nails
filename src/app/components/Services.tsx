@@ -32,7 +32,7 @@ export default function Services() {
       name: "✨ Semi Permanente Premium",
       price: "COP $60.000",
       duration: "75 min",
-      description: "Técnica avanzada con acabado profesional de hasta 4 semanas. Ideal para manos impecables y brillantes por más tiempo.",
+      description: "Manicure con esmalte semipermanente de alta calidad. Incluye limado, cutícula y diseño básico.",
       features: [
         "✅ Preparación especializada de uñas",
         "✅ Base adherente profesional",
@@ -52,7 +52,7 @@ export default function Services() {
       name: "💅 Uñas Acrílicas con Molde",
       price: "COP $100.000",
       duration: "120 min",
-      description: "Diseño estructural personalizado para mayor resistencia y elegancia.",
+      description: "Extensión con acrílico moldeado, limado y diseño premium. Máxima durabilidad.",
       features: [
         "✅ Extensión con molde profesional",
         "✅ Acrílico de alta calidad",
@@ -69,7 +69,7 @@ export default function Services() {
       name: "💖 Forrado en Acrílico",
       price: "COP $85.000",
       duration: "90 min",
-      description: "Refuerzo ideal para uñas naturales, más fuertes y duraderas sin perder la naturalidad.",
+      description: "Fortalecimiento de uña natural con acrílico. Perfecto para uñas débiles.",
       features: [
         "✅ Cobertura completa con acrílico",
         "✅ Mayor dureza y resistencia",
@@ -92,6 +92,23 @@ export default function Services() {
         "✅ Forma y largo a elección",
         "✅ Acabado brillante",
         "✅ Incluye exfoliación y trato VIP"
+      ],
+      popular: false,
+      specialty: false
+    },
+    {
+      id: "pedicure-premium",
+      name: "🦶 Pedicure Premium",
+      price: "COP $45.000",
+      duration: "60 min",
+      description: "Cuidado completo de pies con exfoliación, hidratación y esmaltado.",
+      features: [
+        "✅ Limpieza profunda de pies",
+        "✅ Exfoliación con productos premium",
+        "✅ Hidratación intensiva",
+        "✅ Cuidado de cutículas",
+        "✅ Esmaltado profesional",
+        "✅ Masaje relajante"
       ],
       popular: false,
       specialty: false

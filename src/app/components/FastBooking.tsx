@@ -22,6 +22,7 @@ interface BookingData {
 
 export default function FastBooking() {
   const [step, setStep] = useState(1);
+  const [useAdvancedMode, setUseAdvancedMode] = useState(false);
   const [bookingData, setBookingData] = useState<BookingData>({
     service: null,
     date: "",
@@ -141,6 +142,32 @@ export default function FastBooking() {
             Sistema rápido y fácil. No necesitas crear cuenta ni pagar por adelantado.
           </p>
           {/* Promoción de descuento */}
+          {/* Selector de Modo */}
+          <div className="max-w-md mx-auto mb-6">
+            <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="text-sm">
+                  <span className="font-medium text-gray-700">Modo de reserva:</span>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {useAdvancedMode ? 'Con verificación automática' : 'Rápido vía WhatsApp'}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setUseAdvancedMode(!useAdvancedMode)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    useAdvancedMode ? 'bg-blue-600' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      useAdvancedMode ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl p-6 max-w-2xl mx-auto shadow-luxury">
             <div className="flex items-center justify-center gap-3 mb-2">
               <span className="text-2xl">🎉</span>
@@ -181,13 +208,129 @@ export default function FastBooking() {
         <div className="max-w-4xl mx-auto">
           {/* Steps 1 & 2: Service Selection and Booking Calendar */}
           {(step === 1 || step === 2) && (
-            <BookingCalendar
-              onServiceSelect={handleServiceSelect}
-              onDateTimeSelect={handleDateTimeSelect}
-              selectedService={bookingData.service}
-              selectedDate={bookingData.date}
-              selectedTime={bookingData.time}
-            />
+            <>
+              {useAdvancedMode ? (
+                <BookingCalendar
+                  onServiceSelect={handleServiceSelect}
+                  onDateTimeSelect={handleDateTimeSelect}
+                  selectedService={bookingData.service}
+                  selectedDate={bookingData.date}
+                  selectedTime={bookingData.time}
+                />
+              ) : (
+                <div className="space-y-8">
+                  {/* Modo Simple: Solo selección de servicio */}
+                  <div>
+                    <h3 className="text-2xl font-semibold text-center mb-8">1. Elige tu Servicio</h3>
+                    
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {/* Servicios estáticos para modo simple */}
+                      {[
+                        { id: '1', name: 'Semi Permanente Premium', price: 60000, duration: 75 },
+                        { id: '2', name: 'Uñas Acrílicas con Molde', price: 100000, duration: 120 },
+                        { id: '3', name: 'Forrado en Acrílico', price: 85000, duration: 90 },
+                        { id: '4', name: 'Uñas Acrílicas con Tips', price: 80000, duration: 100 },
+                        { id: '5', name: 'Pedicure Premium', price: 45000, duration: 60 }
+                      ].map((service) => {
+                        const isSelected = bookingData.service?.name === service.name
+                        const discountedPrice = Math.max(0, service.price - 10000)
+                        
+                        return (
+                          <button
+                            key={service.id}
+                            onClick={() => {
+                              handleServiceSelect({
+                                id: service.id,
+                                name: service.name,
+                                durationMin: service.duration,
+                                basePriceCOP: service.price,
+                                active: true,
+                                defaultBufferMin: 15
+                              } as Service)
+                              setStep(2)
+                            }}
+                            className={`relative border-2 rounded-2xl p-6 text-left transition-all duration-300 group transform hover:scale-[1.02] ${
+                              isSelected
+                                ? 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-orange-50 shadow-luxury ring-2 ring-yellow-200'
+                                : 'border-gray-200 bg-white hover:border-yellow-300 hover:bg-yellow-50 hover:shadow-elegant'
+                            }`}
+                          >
+                            {isSelected && (
+                              <div className="absolute top-3 right-3">
+                                <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
+                                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                </div>
+                              </div>
+                            )}
+                            
+                            <div className="mb-4">
+                              <h4 className={`text-xl font-semibold transition-colors mb-2 ${
+                                isSelected ? 'text-yellow-700' : 'text-gray-800 group-hover:text-yellow-600'
+                              }`}>
+                                {service.name}
+                              </h4>
+                              <div className="flex items-center gap-3 mb-3">
+                                <div className="text-right">
+                                  <div className="text-sm text-gray-500 line-through">
+                                    ${service.price.toLocaleString('es-CO')} COP
+                                  </div>
+                                  <div className="text-2xl font-bold text-green-600">
+                                    ${discountedPrice.toLocaleString('es-CO')} COP
+                                  </div>
+                                  <div className="text-xs text-green-600 font-medium">
+                                    ¡Ahorro $10.000!
+                                  </div>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-2 text-center">
+                                    <span className="text-sm font-medium text-green-700">
+                                      ⏱️ {service.duration} min
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className={`mt-4 pt-4 border-t transition-colors ${
+                              isSelected ? 'border-yellow-200' : 'border-gray-100'
+                            }`}>
+                              <span className={`font-medium text-center block transition-colors ${
+                                isSelected ? 'text-yellow-700' : 'text-yellow-600 group-hover:text-yellow-700'
+                              }`}>
+                                {isSelected ? '✓ Servicio Seleccionado' : 'Seleccionar Servicio →'}
+                              </span>
+                            </div>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Paso 2 en modo simple: Solo mensaje de que se contactarán */}
+                  {step === 2 && bookingData.service && (
+                    <div className="text-center">
+                      <h3 className="text-2xl font-semibold mb-4">2. ¡Perfecto!</h3>
+                      <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 max-w-md mx-auto">
+                        <p className="text-blue-700 mb-4">
+                          Has seleccionado: <strong>{bookingData.service.name}</strong>
+                        </p>
+                        <p className="text-blue-600 text-sm mb-4">
+                          Continúa para completar tus datos y te enviaremos la información vía WhatsApp.
+                        </p>
+                        <button
+                          onClick={() => setStep(3)}
+                          className="btn-primary w-full"
+                        >
+                          Continuar con mis datos →
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </>
           )}
 
           {/* Step 3: Client Information */}

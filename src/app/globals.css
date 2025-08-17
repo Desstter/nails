@@ -441,4 +441,146 @@ nav h1.text-luxury-xl {
   }
 }
 
+/* =============================================================================
+   CALENDAR & BOOKING IMPROVEMENTS - Mejoras para calendario y reservas
+   ============================================================================= */
+
+/* Calendario mejorado - estilos adicionales */
+.calendar-date-button {
+  @apply relative p-4 rounded-xl border-2 transition-all duration-300 transform hover:scale-105;
+}
+
+.calendar-date-button:hover {
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.15);
+}
+
+.calendar-date-selected {
+  @apply border-yellow-400 bg-gradient-to-br from-yellow-100 to-yellow-200 shadow-lg ring-2 ring-yellow-300;
+}
+
+.time-slot-button {
+  @apply relative p-4 border-2 rounded-xl transition-all duration-300 transform hover:scale-105;
+}
+
+.time-slot-available {
+  @apply border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50 hover:shadow-md;
+}
+
+.time-slot-selected {
+  @apply border-blue-400 bg-gradient-to-br from-blue-100 to-blue-200 shadow-lg ring-2 ring-blue-300;
+}
+
+.time-slot-unavailable {
+  @apply border-gray-300 bg-gray-100 cursor-not-allowed opacity-60;
+}
+
+/* Modo toggle - interruptor personalizado */
+.toggle-switch {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors;
+}
+
+.toggle-switch-active {
+  @apply bg-blue-600;
+}
+
+.toggle-switch-inactive {
+  @apply bg-gray-300;
+}
+
+.toggle-thumb {
+  @apply inline-block h-4 w-4 transform rounded-full bg-white transition-transform;
+}
+
+.toggle-thumb-active {
+  @apply translate-x-6;
+}
+
+.toggle-thumb-inactive {
+  @apply translate-x-1;
+}
+
+/* Indicadores visuales mejorados */
+.status-indicator {
+  @apply absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center;
+}
+
+.status-indicator-selected {
+  @apply bg-yellow-500;
+}
+
+.status-indicator-today {
+  @apply bg-red-500;
+}
+
+.status-indicator-available {
+  @apply bg-green-500;
+}
+
+/* Mejoras para estados de carga */
+.loading-skeleton {
+  @apply bg-gray-100 animate-pulse rounded-xl;
+}
+
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s linear infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* Responsive improvements específicas para móviles */
+@media (max-width: 768px) {
+  .calendar-date-button {
+    @apply p-3 text-sm;
+  }
+  
+  .time-slot-button {
+    @apply p-3;
+  }
+  
+  .service-card-mobile {
+    @apply p-4;
+  }
+  
+  /* Mejor experiencia táctil en móviles */
+  .calendar-date-button:active,
+  .time-slot-button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+  
+  /* Grid responsivo mejorado */
+  .calendar-grid {
+    @apply grid-cols-3;
+  }
+  
+  .time-grid {
+    @apply grid-cols-2;
+  }
+}
+
+@media (min-width: 768px) {
+  .calendar-grid {
+    @apply grid-cols-5;
+  }
+  
+  .time-grid {
+    @apply grid-cols-4;
+  }
+}
+
+@media (min-width: 1024px) {
+  .calendar-grid {
+    @apply grid-cols-7;
+  }
+  
+  .time-grid {
+    @apply grid-cols-5;
+  }
+}
+
 /* Fin del archivo CSS simplificado para producción */
