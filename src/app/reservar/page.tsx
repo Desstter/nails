@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import ReservationPage from "./components/ReservationPage";
 
 export const metadata: Metadata = {
@@ -33,5 +34,9 @@ export const metadata: Metadata = {
 };
 
 export default function ReservarPage() {
-  return <ReservationPage />;
+  return (
+    <Suspense fallback={null}>
+      <ReservationPage />
+    </Suspense>
+  );
 }
