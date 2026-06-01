@@ -141,7 +141,7 @@ export default function Contact() {
                 </div>
               </div>
               <p className="text-sm text-gray-600 mb-4">
-                Respuesta inmediata • Disponible de 7:00 AM a 9:00 PM
+                Respuesta inmediata • Disponible de 7:00 AM a 8:00 PM
               </p>
               <button
                 onClick={handleWhatsAppContact}

@@ -24,7 +24,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.PUBLIC_BASE_URL || 'http://localhost:3000'),
   title: "Joangel Nails Studio - Manicure y Pedicure Premium a Domicilio en Cali",
-  description: "Manicure y pedicure de lujo a domicilio en Cali. Pago al finalizar, higiene certificada, 8 años de experiencia. Tu salón de belleza privado en casa.",
+  description: "Manicure y pedicure de lujo a domicilio en Cali. Pago al finalizar, higiene certificada, 15 años de experiencia. Tu salón de belleza privado en casa.",
   keywords: "manicure a domicilio Cali, pedicure premium, uñas gel Cali, nail art domicilio, manicure profesional, belleza a domicilio Cali",
   authors: [{ name: "Claudia Shirley Lopez - Nail Artist Profesional" }],
   robots: "index, follow",

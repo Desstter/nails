@@ -56,6 +56,7 @@ export default function FastBooking() {
 
   const calculateEndTime = (startTime: string, durationMin: number) => {
     // startTime viene en formato 24h "HH:MM"
+    if (!startTime || !startTime.includes(':')) return '';
     const [hours, minutes] = startTime.split(':').map(Number);
     const totalMinutes = hours * 60 + minutes + durationMin;
     const endHours = Math.floor(totalMinutes / 60);
@@ -70,6 +71,7 @@ export default function FastBooking() {
 
   // Formatear tiempo de 24h a 12h
   const formatTime12h = (time24: string) => {
+    if (!time24 || !time24.includes(':')) return '';
     const [hours, minutes] = time24.split(':').map(Number);
     const period = hours >= 12 ? 'PM' : 'AM';
     const hours12 = hours % 12 || 12;
@@ -86,17 +88,25 @@ export default function FastBooking() {
     const { service, date, time, clientName, clientPhone, neighborhood, address } = bookingData;
     if (!service) return '';
     
+    const hasDateTime = Boolean(date && time);
     const startTime12h = formatTime12h(time);
     const endTime = calculateEndTime(time, service.durationMin);
-    const formattedDate = new Date(date).toLocaleDateString('es-CO', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
+    const formattedDate = date
+      ? new Date(date).toLocaleDateString('es-CO', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      : '';
 
     const originalPrice = `$${service.basePriceCOP.toLocaleString('es-CO')} COP`;
     const finalPrice = formatServicePrice(service);
+
+    const scheduleLine = hasDateTime
+      ? `📅 Fecha: ${formattedDate}\n` +
+        `🕐 Hora: ${startTime12h} - ${endTime}\n\n`
+      : `📅 Fecha y hora: A coordinar por WhatsApp\n\n`;
 
     return encodeURIComponent(
       `🗓️ NUEVA CITA AGENDADA - FORMULARIO WEB\n\n` +
@@ -107,8 +117,7 @@ export default function FastBooking() {
       `🎉 Descuento primera vez: -$10.000\n` +
       `💚 Precio final: ${finalPrice}\n` +
       `⏰ Duración: ${service.durationMin} minutos\n\n` +
-      `📅 Fecha: ${formattedDate}\n` +
-      `🕐 Hora: ${startTime12h} - ${endTime}\n\n` +
+      scheduleLine +
       `📍 Ubicación:\n` +
       `Barrio: ${neighborhood}\n` +
       `Dirección: ${address}\n\n` +
@@ -446,22 +455,31 @@ export default function FastBooking() {
                         <span className="text-gray-600">Duración:</span>
                         <span className="font-medium">{bookingData.service?.durationMin} minutos</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Fecha:</span>
-                        <span className="font-medium">
-                          {new Date(bookingData.date).toLocaleDateString('es-CO', { 
-                            weekday: 'long', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Hora:</span>
-                        <span className="font-medium">
-                          {formatTime12h(bookingData.time)} - {calculateEndTime(bookingData.time, bookingData.service?.durationMin || 0)}
-                        </span>
-                      </div>
+                      {bookingData.date && bookingData.time ? (
+                        <>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Fecha:</span>
+                            <span className="font-medium">
+                              {new Date(bookingData.date).toLocaleDateString('es-CO', {
+                                weekday: 'long',
+                                month: 'long',
+                                day: 'numeric'
+                              })}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Hora:</span>
+                            <span className="font-medium">
+                              {formatTime12h(bookingData.time)} - {calculateEndTime(bookingData.time, bookingData.service?.durationMin || 0)}
+                            </span>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Fecha y hora:</span>
+                          <span className="font-medium text-yellow-600">A coordinar por WhatsApp</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
